@@ -1,0 +1,189 @@
+%PDF-1.4
+1 0 obj
+<< /Type /Catalog /Pages 2 0 R >>
+endobj
+2 0 obj
+<< /Type /Pages /Kids [4 0 R 6 0 R 8 0 R] /Count 3 >>
+endobj
+3 0 obj
+<< /Type /Font /Subtype /Type1 /BaseFont /Courier /Encoding /WinAnsiEncoding >>
+endobj
+4 0 obj
+<< /Type /Page /Parent 2 0 R /MediaBox [0 0 612 792] /Resources << /Font << /F1 3 0 R >> >> /Contents 5 0 R >>
+endobj
+5 0 obj
+<< /Length 2639 >>
+stream
+BT /F1 10 Tf 48 750 Td 14 TL
+(# Contrato técnico do piloto) Tj T*
+() Tj T*
+(## Fonte e limites) Tj T*
+() Tj T*
+(iMC é a única fonte da verdade. Fluxo: GET iMC, GET NetBox, comparação, relatório,) Tj T*
+(PATCH autorizado. Alteram-se apenas descrição e VLAN de interfaces existentes. Nenhum) Tj T*
+(objeto é criado ou excluído; nenhum dispositivo é atualizado.) Tj T*
+() Tj T*
+(A allowlist rígida, verificada na comparação e no transporte NetBox, contém) Tj T*
+(exclusivamente:) Tj T*
+() Tj T*
+(ALLOWED_INTERFACE_PATCH_FIELDS = {) Tj T*
+(    "description", "mode", "untagged_vlan", "tagged_vlans",) Tj T*
+(}) Tj T*
+() Tj T*
+(mode só muda para representar a VLAN confirmada. Campos desconhecidos bloqueiam o) Tj T*
+(payload inteiro. Não há atualização de enabled, status, up/down, velocidade, tipo, IP,) Tj T*
+(MAC, site, rack, comentários, tags ou custom fields.) Tj T*
+() Tj T*
+(Os clientes bloqueiam métodos antes da rede. A sessão também valida requisições) Tj T*
+(diretas e preparadas. PATCH só pode atingir uma interface individual.) Tj T*
+(Redirecionamentos não são seguidos. Código legado fica em) Tj T*
+(imc/legacy/netbox_client.py.disabled, com bloqueio explícito, fora dos imports e sem) Tj T*
+(habilitação por ambiente.) Tj T*
+() Tj T*
+(## Correspondência e normalização) Tj T*
+() Tj T*
+(Dispositivo: nome exato sysName, ou campo label/name quando o anterior não estiver) Tj T*
+(presente. Nome vazio não tem fallback por IP. Interface: nome exato ifName, name ou) Tj T*
+(ifDescription, nesta ordem por presença de campo. Não se expande abreviação nem se) Tj T*
+(associa por posição na lista.) Tj T*
+() Tj T*
+(O nome técnico ifDescription não é usado como descrição. A descrição usa ifAlias,) Tj T*
+(description ou ifDesc, nesta ordem por presença.) Tj T*
+() Tj T*
+(- None/null ou string vazia explícitos: descrição vazia, podendo limpar a descrição) Tj T*
+(existente.) Tj T*
+(- Campo ausente ou tipo inesperado: preservar a descrição NetBox e registrar aviso.) Tj T*
+(- Remover somente espaços no início/fim; preservar maiúsculas, acentos e espaços) Tj T*
+(internos.) Tj T*
+(- Resposta inválida ou erro de parsing da coleção: preservar os objetos envolvidos.) Tj T*
+() Tj T*
+(Dispositivos/interfaces duplicados no iMC e correspondências duplicadas no NetBox são) Tj T*
+(bloqueados. A interface retornada deve pertencer ao dispositivo consultado.) Tj T*
+() Tj T*
+(## VLANs) Tj T*
+() Tj T*
+(VIDs válidos: 1 a 4094; nenhum VID é fixado ou filtrado como regra operacional. VID) Tj T*
+(não é o ID interno NetBox: a resolução acontece antes da comparação. Texto numérico,) Tj T*
+ET BT /F1 9 Tf 48 32 Td (Piloto iMC - NetBox | 1/3) Tj ET
+endstream
+endobj
+6 0 obj
+<< /Type /Page /Parent 2 0 R /MediaBox [0 0 612 792] /Resources << /Font << /F1 3 0 R >> >> /Contents 7 0 R >>
+endobj
+7 0 obj
+<< /Length 2817 >>
+stream
+BT /F1 10 Tf 48 750 Td 14 TL
+(objetos contendo VID, ordem e duplicatas são normalizados.) Tj T*
+() Tj T*
+(As consultas a portvlan e aos modos precisam completar com sucesso. Access exige uma) Tj T*
+(única VLAN igual ao PVID. Trunk exige PVID confirmado na associação; esse PVID) Tj T*
+(representa a VLAN nativa e as demais VLANs são tagged, conforme o contrato herdado do) Tj T*
+(cliente.) Tj T*
+() Tj T*
+(Hybrid é reconhecido, mas bloqueado enquanto os dados disponíveis não distinguirem) Tj T*
+(inequivocamente VLANs tagged e untagged. O PVID sozinho não é suficiente. Também não) Tj T*
+(se representa trunk sem PVID confirmado, tagged-all ou múltiplas VLANs untagged por) Tj T*
+(inferência.) Tj T*
+() Tj T*
+(VID ausente ou duplicado no NetBox bloqueia a proposta inteira da interface, inclusive) Tj T*
+(descrição. A busca por VID é global; sem regra validada de site/grupo, VIDs duplicados) Tj T*
+(são ambíguos.) Tj T*
+() Tj T*
+(Resposta vazia, timeout, autenticação inválida, coleção incompleta, modo desconhecido) Tj T*
+(ou parsing inválido preservam toda a interface. Não há suporte a remoção de todas as) Tj T*
+(associações por ausência de VLAN no iMC.) Tj T*
+() Tj T*
+(Uma lista tagged pode ser esvaziada quando uma configuração access completa confirma) Tj T*
+(que a interface possui exclusivamente o PVID. Uma associação nativa pode ser) Tj T*
+(substituída por outra confirmada. Essas transições são comparadas antes do PATCH.) Tj T*
+() Tj T*
+(## Endpoints ativos) Tj T*
+() Tj T*
+(| Serviço | Método | Endpoint relativo |) Tj T*
+(| --- | --- | --- |) Tj T*
+(| iMC | GET | /imcrs/plat/res/device |) Tj T*
+(| iMC | GET | /imcrs/plat/res/device/{device_id}/interface |) Tj T*
+(| iMC | GET | /imcrs/vlan/portvlan?devId=...&ifIndex=... |) Tj T*
+(| iMC | GET | /imcrs/vlan/access?devId=... |) Tj T*
+(| iMC | GET | /imcrs/vlan/trunk?devId=... |) Tj T*
+(| iMC | GET | /imcrs/vlan/hybrid?devId=... |) Tj T*
+(| NetBox | GET | /api/dcim/devices/?name=... |) Tj T*
+(| NetBox | GET | /api/dcim/interfaces/?device_id=...&name=... |) Tj T*
+(| NetBox | GET | /api/ipam/vlans/?vid=... |) Tj T*
+(| NetBox | PATCH | /api/dcim/interfaces/{id}/ |) Tj T*
+() Tj T*
+(iMC pagina com start/size até uma página vazia, inclusive após páginas curtas; NetBox) Tj T*
+(usa offset/limit. Endpoints que ignoram paginação ou repetem páginas falham com) Tj T*
+(segurança. XML usa coleções list com os elementos device, interface, vlan, accessIf,) Tj T*
+(trunkIf e hybridIf; JSON aceita coleções homônimas ou list. Formatos diferentes geram) Tj T*
+(pendência, não associação inferida. Validar esse contrato na versão do laboratório) Tj T*
+(antes de aplicar.) Tj T*
+() Tj T*
+(## Execução) Tj T*
+() Tj T*
+(Dry-run padrão consulta tudo, normaliza, compara, valida, apresenta valores) Tj T*
+ET BT /F1 9 Tf 48 32 Td (Piloto iMC - NetBox | 2/3) Tj ET
+endstream
+endobj
+8 0 obj
+<< /Type /Page /Parent 2 0 R /MediaBox [0 0 612 792] /Resources << /Font << /F1 3 0 R >> >> /Contents 9 0 R >>
+endobj
+9 0 obj
+<< /Length 2230 >>
+stream
+BT /F1 10 Tf 48 750 Td 14 TL
+(anteriores/propostos e não envia PATCH. Interface igual é contabilizada como já) Tj T*
+(sincronizada.) Tj T*
+() Tj T*
+(Antes da aplicação há resumo de dispositivos consultados/encontrados, interfaces) Tj T*
+(consultadas/divergentes, campos, PATCHes planejados, erros e objetos ignorados.) Tj T*
+(Aplicação exige --apply e confirmação SIM; --apply --non-interactive dispensa o prompt) Tj T*
+(por opção explícita. Opções contraditórias são rejeitadas.) Tj T*
+() Tj T*
+(Antes de cada PATCH, nova leitura verifica ID e snapshot da interface. Se mudou, o) Tj T*
+(PATCH é bloqueado. Isso reduz conflitos, mas não oferece transação atômica entre GET e) Tj T*
+(PATCH. Uma alteração concorrente após a nova leitura ainda é possível.) Tj T*
+() Tj T*
+(Falha em uma interface não interrompe as demais. Logs apresentam resultado individual) Tj T*
+(e resumo final; falhas retornam código diferente de zero. Código 0: execução sem) Tj T*
+(erros; 1: pendências/falhas no processamento; 2: configuração, lock ou falha global.) Tj T*
+(Cancelamento interativo registrado não envia PATCH.) Tj T*
+() Tj T*
+(## Logs e concorrência) Tj T*
+() Tj T*
+(Logs em logs/pilot.log, com data/hora UTC, UUID, commit e indicação de alterações) Tj T*
+(locais, modo, propostas e resultados. Rotação: 5 MB por arquivo, cinco backups.) Tj T*
+(Diretório 0700, arquivos criados com umask 077. Não registrar corpos completos de) Tj T*
+(resposta, senhas, tokens, cookies ou cabeçalhos de autenticação.) Tj T*
+() Tj T*
+(O filtro central mascara credenciais conhecidas e padrões de segredo, inclusive URLs) Tj T*
+(com usuário/senha. A descrição pode conter texto livre: restringir acesso aos logs e) Tj T*
+(nunca versioná-los.) Tj T*
+() Tj T*
+(Python usa flock no arquivo fixo .pilot.lock da raiz. O wrapper usa também) Tj T*
+(.wrapper.lock. Bloqueio cobre execução direta e wrapper na mesma cópia do repositório;) Tj T*
+(cópias distintas exigem coordenação operacional. Não remover arquivos de lock durante) Tj T*
+(execução.) Tj T*
+() Tj T*
+(Execução manual única, sem loop. Instalador de cron está desativado. Agendamento) Tj T*
+(somente após validação e por um único mecanismo.) Tj T*
+ET BT /F1 9 Tf 48 32 Td (Piloto iMC - NetBox | 3/3) Tj ET
+endstream
+endobj
+xref
+0 10
+0000000000 65535 f 
+0000000009 00000 n 
+0000000058 00000 n 
+0000000127 00000 n 
+0000000222 00000 n 
+0000000348 00000 n 
+0000003039 00000 n 
+0000003165 00000 n 
+0000006034 00000 n 
+0000006160 00000 n 
+trailer << /Size 10 /Root 1 0 R >>
+startxref
+8442
+%%EOF

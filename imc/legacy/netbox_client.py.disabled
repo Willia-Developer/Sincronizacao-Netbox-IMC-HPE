@@ -1,0 +1,604 @@
+# FORA DO ESCOPO DO PILOTO. Referência não importável. Não executar.
+
+"""Cliente NetBox restrito a consulta e atualização de objetos existentes.
+
+Contrato de segurança: somente GET e PATCH. Criação e exclusão de inventário
+não fazem parte desta integração; objetos ausentes ou ambíguos viram pendência.
+"""
+
+from __future__ import annotations
+
+raise RuntimeError('FORA DO ESCOPO DO PILOTO')
+
+from dataclasses import dataclass
+from typing import Dict, Iterator, Optional
+
+import requests
+
+
+class NetBoxError(RuntimeError):
+    """Erro genérico ao interagir com o NetBox."""
+
+
+@dataclass(slots=True)
+class NetBoxIdentifiers:
+    """IDs básicos usados na criação de dispositivos."""
+
+    site_id: int
+    manufacturer_id: int
+    device_type_id: int
+    device_role_id: int
+
+
+def _slugify(value: str) -> str:
+    return (
+        value.lower()
+        .replace(" ", "-")
+        .replace("/", "-")
+        .replace("_", "-")
+        .replace(".", "-")
+    )
+
+
+class NetBoxClient:
+    ALLOWED_METHODS = frozenset({"GET", "PATCH"})
+
+    def __init__(
+        self,
+        base_url: str,
+        token: str,
+        *,
+        verify_ssl: bool = False,
+        proxies: Optional[Dict[str, str]] = None,
+        request_timeout: int = 30,
+    ) -> None:
+        self.base_url = base_url.rstrip("/")
+        self.session = requests.Session()
+        self.timeout = request_timeout
+        self.session.verify = verify_ssl
+        if proxies:
+            self.session.proxies.update(proxies)
+        # NetBox v1 usa o esquema ``Token``; tokens v2, que começam com
+        # ``nbt_``, usam ``Bearer``. Aceitar ambos permite que a integração
+        # funcione durante a migração de tokens do NetBox.
+        auth_scheme = "Bearer" if token.startswith("nbt_") else "Token"
+        self.session.headers.update(
+            {
+                "Authorization": f"{auth_scheme} {token}",
+                "Accept": "application/json",
+                "Content-Type": "application/json",
+            }
+        )
+
+    # ------------------------------------------------------------------ HTTP helpers
+    def _request(self, method: str, endpoint: str, **kwargs) -> requests.Response:
+        method = method.upper()
+        if method not in self.ALLOWED_METHODS:
+            raise NetBoxError(
+                f"Método HTTP {method} bloqueado: a integração NetBox permite "
+                "somente GET e PATCH."
+            )
+        url = f"{self.base_url}/api/{endpoint.lstrip('/')}"
+        kwargs.setdefault("timeout", self.timeout)
+        try:
+            response = self.session.request(method, url, **kwargs)
+        except requests.RequestException as exc:  # pragma: no cover - falha conexao
+            raise NetBoxError(f"Erro de conexão com NetBox: {exc}") from exc
+
+        if not response.ok:
+            raise NetBoxError(
+                f"Erro {response.status_code} em {url}: {response.text}"
+            )
+        return response
+
+    def _get(self, endpoint: str, *, params: Optional[Dict] = None) -> Dict:
+        return self._request("GET", endpoint, params=params).json()
+
+    def _post(self, endpoint: str, data: Dict) -> Dict:
+        # DESATIVADO POR POLÍTICA - criação de objetos no NetBox não é permitida.
+        # Código original preservado para rastreabilidade:
+        # return self._request("POST", endpoint, json=data).json()
+        raise NetBoxError(
+            f"Criação bloqueada para {endpoint}: cadastre o objeto manualmente no NetBox."
+        )
+
+    def _patch(self, endpoint: str, data: Dict) -> Dict:
+        return self._request("PATCH", endpoint, json=data).json()
+
+    def _iterate_results(
+        self, endpoint: str, *, params: Optional[Dict] = None, step: int = 200
+    ) -> Iterator[Dict]:
+        """Itera resultados paginados dos endpoints do NetBox."""
+        params = params.copy() if params else {}
+        offset = 0
+        while True:
+            page_params = dict(params)
+            page_params.update({"limit": step, "offset": offset})
+            payload = self._get(endpoint, params=page_params)
+            results = payload.get("results") or []
+            if not results:
+                break
+            for item in results:
+                yield item
+            if not payload.get("next"):
+                break
+            offset += step
+
+    # ------------------------------------------------------------------ utilidades
+    def _get_or_create(
+        self, endpoint: str, search_field: str, search_value: str, payload: Dict
+    ) -> Dict:
+        result = self._get(endpoint, params={search_field: search_value})
+        results = result.get("results") or []
+        if len(results) == 1:
+            return results[0]
+        if len(results) > 1:
+            raise NetBoxError(
+                f"Correspondência ambígua em {endpoint}: {len(results)} objetos "
+                f"encontrados para {search_field}={search_value!r}."
+            )
+        # DESATIVADO POR POLÍTICA - não criar entidades-base automaticamente.
+        # Código original preservado para rastreabilidade:
+        # return self._post(endpoint, payload)
+        raise NetBoxError(
+            f"Objeto ausente em {endpoint}: {search_field}={search_value!r}. "
+            "Crie-o manualmente no NetBox."
+        )
+
+    # ------------------------------------------------------------------ entidades base
+    def ensure_site(self, name: str, slug: Optional[str] = None) -> Dict:
+        slug = slug or _slugify(name)
+        payload = {"name": name, "slug": slug, "status": "active"}
+        return self._get_or_create("dcim/sites/", "slug", slug, payload)
+
+    def ensure_manufacturer(self, name: str, slug: Optional[str] = None) -> Dict:
+        slug = slug or _slugify(name)
+        payload = {"name": name, "slug": slug}
+        return self._get_or_create("dcim/manufacturers/", "slug", slug, payload)
+
+    def ensure_device_role(self, name: str, slug: Optional[str] = None) -> Dict:
+        slug = slug or _slugify(name)
+        payload = {"name": name, "slug": slug, "color": "9e9e9e"}
+        return self._get_or_create("dcim/device-roles/", "slug", slug, payload)
+
+    def ensure_device_type(
+        self, model: str, manufacturer_id: int, slug: Optional[str] = None
+    ) -> Dict:
+        slug = slug or _slugify(model)
+        payload = {
+            "manufacturer": manufacturer_id,
+            "model": model,
+            "slug": slug,
+        }
+        return self._get_or_create("dcim/device-types/", "slug", slug, payload)
+
+    def ensure_rack(
+        self,
+        *,
+        name: str,
+        site_id: int,
+        slug: Optional[str] = None,
+        u_height: int = 42,
+        desc_units: bool = False,
+        status: str = "active",
+    ) -> Dict:
+        slug = slug or _slugify(name)
+        # Busca por slug E site_id para evitar conflitos entre sites
+        result = self._get("dcim/racks/", params={"slug": slug, "site_id": site_id})
+        results = result.get("results") or []
+        if len(results) > 1:
+            raise NetBoxError(
+                f"Rack ambíguo: {len(results)} resultados para slug={slug!r} "
+                f"e site_id={site_id}."
+            )
+        if results:
+            existing = results[0]
+            # Verifica se o site corresponde
+            existing_site_id = (
+                existing.get("site", {}).get("id")
+                if isinstance(existing.get("site"), dict)
+                else existing.get("site")
+            )
+            if existing_site_id == site_id:
+                return existing
+
+        # DESATIVADO POR POLÍTICA - criação automática de rack não permitida.
+        payload = {
+            "name": name,
+            "slug": slug,
+            "site": site_id,
+            "status": status,
+            "type": "4-post-cabinet",
+            "width": 19,
+            "u_height": u_height,
+            "desc_units": desc_units,
+        }
+        # Código original preservado para rastreabilidade:
+        # return self._post("dcim/racks/", payload)
+        raise NetBoxError(
+            f"Rack ausente ou incompatível: {name!r}. Crie/corrija manualmente no NetBox."
+        )
+
+    def ensure_vlan(
+        self, *, vid: int, site_id: Optional[int] = None, name: Optional[str] = None
+    ) -> Dict:
+        params = {"vid": vid}
+        if site_id:
+            params["site_id"] = site_id
+        result = self._get("ipam/vlans/", params=params).get("results") or []
+        if len(result) > 1:
+            raise NetBoxError(
+                f"VLAN ambígua: {len(result)} resultados para VID {vid}."
+            )
+        if result:
+            existing = result[0]
+            # Só atualiza o nome se o chamador tiver um nome real vindo do
+            # IMC e ele for diferente do que já está no NetBox — evita
+            # sobrescrever à toa e permite que chamadas sem `name` (ex.:
+            # vínculo de VLAN em porta) reaproveitem o nome já sincronizado.
+            if name and existing.get("name") != name:
+                return self._patch(f"ipam/vlans/{existing['id']}/", {"name": name})
+            return existing
+
+        payload = {"vid": vid, "name": name or f"VLAN {vid}", "status": "active"}
+        if site_id:
+            payload["site"] = site_id
+        # DESATIVADO POR POLÍTICA - criação automática de VLAN não permitida.
+        # Código original preservado para rastreabilidade:
+        # return self._post("ipam/vlans/", payload)
+        raise NetBoxError(f"VLAN {vid} ausente. Cadastre-a manualmente no NetBox.")
+
+    # ------------------------------------------------------------------ dispositivos
+    def ensure_device(
+        self,
+        *,
+        name: str,
+        identifiers: NetBoxIdentifiers,
+        status: str,
+        primary_ip4: Optional[str] = None,
+        comments: Optional[str] = None,
+        custom_fields: Optional[Dict] = None,
+        rack_id: Optional[int] = None,
+        rack_position: Optional[int] = None,
+        face: str = "front",
+    ) -> Dict:
+        lookup = self._get(
+            "dcim/devices/",
+            params={"name": name, "site_id": identifiers.site_id},
+        )
+        matches = lookup.get("results") or []
+        if len(matches) > 1:
+            raise NetBoxError(
+                f"Dispositivo ambíguo: {len(matches)} resultados para {name!r}."
+            )
+        result = matches[0] if matches else None
+
+        payload = {
+            "name": name,
+            "status": status,
+            "site": identifiers.site_id,
+            "device_role": identifiers.device_role_id,
+            "role": identifiers.device_role_id,
+            "device_type": identifiers.device_type_id,
+        }
+        if primary_ip4:
+            payload["primary_ip4"] = primary_ip4
+        if comments:
+            payload["comments"] = comments
+        if custom_fields:
+            payload["custom_fields"] = custom_fields
+        if rack_id:
+            payload["rack"] = rack_id
+            if rack_position is not None:
+                payload["position"] = rack_position
+                payload["face"] = face
+
+        if result is None:
+            # DESATIVADO POR POLÍTICA - criação automática de dispositivo.
+            # Código original preservado para rastreabilidade:
+            # return self._post("dcim/devices/", payload)
+            raise NetBoxError(
+                f"Dispositivo {name!r} ausente. Cadastre-o manualmente no NetBox."
+            )
+
+        # Só reenvia (PATCH) os campos cujo valor realmente mudou em relação
+        # ao que já está no NetBox — evita reescrever (e "tocar" o
+        # updated_at de) um dispositivo idêntico a cada execução do
+        # agendamento. Mesmo padrão já usado em ensure_interface().
+        # "device_role" fica de fora da comparação: esta API sempre devolve
+        # ``null`` para essa chave (versões atuais do NetBox usam "role");
+        # ainda é enviado junto com "role" quando há uma mudança real, para
+        # compatibilidade com instalações de NetBox mais antigas.
+        comparable_fields = (
+            "status", "site", "role", "device_type", "comments",
+            "primary_ip4", "rack", "position", "face", "custom_fields",
+        )
+        update_payload: Dict[str, object] = {}
+        for field in comparable_fields:
+            if field not in payload:
+                continue
+            value = payload[field]
+            current = result.get(field)
+            if isinstance(current, dict):
+                current = current.get("value", current.get("id"))
+            if current != value:
+                update_payload[field] = value
+
+        if not update_payload:
+            return result
+
+        if "role" in update_payload:
+            update_payload["device_role"] = payload["device_role"]
+
+        return self._patch(f"dcim/devices/{result['id']}/", update_payload)
+
+    def ensure_virtual_chassis(
+        self, *, name: str, master_device_id: int, domain: Optional[str] = None
+    ) -> Dict:
+        result = self._get("dcim/virtual-chassis/", params={"name": name})
+        matches = result.get("results") or []
+        if len(matches) > 1:
+            raise NetBoxError(
+                f"Chassi virtual ambíguo: {len(matches)} resultados para {name!r}."
+            )
+        vc = matches[0] if matches else None
+        payload = {"name": name, "master": master_device_id}
+        if domain:
+            payload["domain"] = domain
+
+        if vc is None:
+            # DESATIVADO POR POLÍTICA - criação automática de chassi virtual.
+            # Código original preservado para rastreabilidade:
+            # return self._post("dcim/virtual-chassis/", payload)
+            raise NetBoxError(
+                f"Chassi virtual {name!r} ausente. Cadastre-o manualmente no NetBox."
+            )
+
+        update_payload = {}
+        if vc.get("master", {}).get("id") != master_device_id:
+            update_payload["master"] = master_device_id
+        if domain and vc.get("domain") != domain:
+            update_payload["domain"] = domain
+        if update_payload:
+            vc = self._patch(f"dcim/virtual-chassis/{vc['id']}/", update_payload)
+        return vc
+
+    def assign_device_to_virtual_chassis(
+        self,
+        *,
+        device_id: int,
+        virtual_chassis_id: int,
+        position: Optional[int] = None,
+        priority: Optional[int] = None,
+    ) -> Dict:
+        payload: Dict[str, int] = {"virtual_chassis": virtual_chassis_id}
+        if position is not None:
+            payload["vc_position"] = position
+        if priority is not None:
+            payload["vc_priority"] = priority
+        return self._patch(f"dcim/devices/{device_id}/", payload)
+
+    def ensure_interface(
+        self,
+        *,
+        device_id: int,
+        name: str,
+        interface_type: str = "1000base-t",
+        enabled: Optional[bool] = None,
+        mode: Optional[str] = None,
+        description: Optional[str] = None,
+        untagged_vlan_id: Optional[int] = None,
+        tagged_vlan_ids: Optional[list[int]] = None,
+        mac_address: Optional[str] = None,
+    ) -> Dict:
+        response = self._get(
+            "dcim/interfaces/", params={"device_id": device_id, "name": name}
+        )
+        matches = response.get("results") or []
+        if len(matches) > 1:
+            raise NetBoxError(
+                f"Interface ambígua: {len(matches)} resultados para {name!r} "
+                f"no dispositivo {device_id}."
+            )
+        existing = matches[0] if matches else None
+
+        payload: Dict[str, object] = {
+            "device": device_id,
+            "name": name,
+            "type": interface_type,
+        }
+        if enabled is not None:
+            payload["enabled"] = enabled
+        if mode is not None:
+            payload["mode"] = mode
+        if description is not None:
+            payload["description"] = description
+        # Nota: mac_address não pode ser definido diretamente (read-only)
+        # Ele é preenchido automaticamente quando definimos primary_mac_address
+        # ``None`` significa "não gerenciado/não consultado". Lista vazia
+        # significa "consultado e não há VLANs", permitindo limpar dados antigos.
+        if tagged_vlan_ids is not None:
+            payload["mode"] = mode
+            payload["untagged_vlan"] = untagged_vlan_id
+            payload["tagged_vlans"] = tagged_vlan_ids
+
+        if existing is None:
+            # DESATIVADO POR POLÍTICA - criação automática de interface.
+            # Código original preservado, comentado, para rastreabilidade:
+            # interface = self._post("dcim/interfaces/", payload)
+            # if mac_address:
+            #     mac_obj = self.ensure_interface_mac(
+            #         interface_id=interface["id"], mac_address=mac_address
+            #     )
+            #     if mac_obj:
+            #         self._patch(
+            #             f"dcim/interfaces/{interface['id']}/",
+            #             {"primary_mac_address": mac_obj["id"]},
+            #         )
+            # return interface
+            raise NetBoxError(
+                f"Interface {name!r} ausente no dispositivo {device_id}. "
+                "Cadastre-a manualmente no NetBox."
+            )
+
+        update_payload: Dict[str, object] = {}
+        for field in ("type", "enabled", "description", "mode"):
+            if field not in payload:
+                continue
+            value = payload[field]
+            current = existing.get(field)
+            if isinstance(current, dict) and "value" in current:
+                current = current["value"]
+            if current != value:
+                update_payload[field] = value
+
+        if tagged_vlan_ids is not None:
+            current_vlan = existing.get("untagged_vlan")
+            current_vlan_id = None
+            if isinstance(current_vlan, dict):
+                current_vlan_id = current_vlan.get("id")
+            elif current_vlan:
+                current_vlan_id = current_vlan
+            if current_vlan_id != untagged_vlan_id:
+                update_payload["untagged_vlan"] = untagged_vlan_id
+
+        if tagged_vlan_ids is not None:
+            current_tagged = existing.get("tagged_vlans") or []
+            current_ids = sorted(
+                vlan.get("id") if isinstance(vlan, dict) else vlan
+                for vlan in current_tagged
+            )
+            desired_ids = sorted(tagged_vlan_ids)
+            if current_ids != desired_ids:
+                update_payload["tagged_vlans"] = desired_ids
+
+        if update_payload:
+            updated = self._patch(
+                f"dcim/interfaces/{existing['id']}/", update_payload
+            )
+        else:
+            updated = existing
+
+        if mac_address:
+            mac_obj = self.ensure_interface_mac(
+                interface_id=updated["id"],
+                mac_address=mac_address,
+            )
+            if mac_obj:
+                # Define o MAC como primary_mac_address para aparecer na coluna
+                current_primary = updated.get("primary_mac_address")
+                current_primary_id = (
+                    current_primary.get("id")
+                    if isinstance(current_primary, dict)
+                    else current_primary
+                )
+                if current_primary_id != mac_obj["id"]:
+                    self._patch(
+                        f"dcim/interfaces/{updated['id']}/",
+                        {"primary_mac_address": mac_obj["id"]},
+                    )
+                    # Recarrega a interface para refletir a mudança
+                    updated = self._get(f"dcim/interfaces/{updated['id']}/")
+        return updated
+
+    # ------------------------------------------------------------------ mac addresses
+    def ensure_interface_mac(
+        self,
+        *,
+        interface_id: int,
+        mac_address: Optional[str],
+        description: Optional[str] = None,
+    ) -> Optional[Dict]:
+        """Garante que a interface possua (ou não) o MAC address informado."""
+        existing = list(
+            self._iterate_results(
+                "dcim/mac-addresses/",
+                params={"assigned_object_id": interface_id},
+            )
+        )
+        if len(existing) > 1:
+            raise NetBoxError(
+                f"MAC ambíguo: {len(existing)} objetos associados à interface {interface_id}."
+            )
+        current = existing[0] if existing else None
+
+        if not mac_address:
+            return None
+
+        payload: Dict[str, object] = {
+            "mac_address": mac_address,
+            "assigned_object_type": "dcim.interface",
+            "assigned_object_id": interface_id,
+        }
+        if description:
+            payload["description"] = description
+
+        if current:
+            if (
+                current.get("mac_address", "").lower() == mac_address.lower()
+                and (description or "") == (current.get("description") or "")
+            ):
+                return current
+            return self._patch(f"dcim/mac-addresses/{current['id']}/", payload)
+
+        # DESATIVADO POR POLÍTICA - criação automática de MAC não permitida.
+        # Código original preservado para rastreabilidade:
+        # return self._post("dcim/mac-addresses/", payload)
+        raise NetBoxError(
+            f"MAC {mac_address!r} ausente para a interface {interface_id}. "
+            "Cadastre-o manualmente no NetBox."
+        )
+
+    # ------------------------------------------------------------------ IP addresses
+    def ensure_ip_address(
+        self,
+        address: str,
+        *,
+        status: str = "active",
+        role: Optional[str] = None,
+        assigned_object_type: Optional[str] = None,
+        assigned_object_id: Optional[int] = None,
+        description: Optional[str] = None,
+    ) -> Dict:
+        params = {"address": address}
+        existing = list(self._iterate_results("ipam/ip-addresses/", params=params))
+        payload: Dict[str, object] = {"address": address, "status": status}
+        if role:
+            payload["role"] = role
+        if assigned_object_type and assigned_object_id:
+            payload["assigned_object_type"] = assigned_object_type
+            payload["assigned_object_id"] = assigned_object_id
+        if description:
+            payload["description"] = description
+
+        if len(existing) > 1:
+            raise NetBoxError(
+                f"IP ambíguo: {len(existing)} resultados para {address!r}."
+            )
+        if existing:
+            ip = existing[0]
+            changes: Dict[str, object] = {}
+            for key in ("status", "role", "description"):
+                value = payload.get(key)
+                if value is not None and ip.get(key) != value:
+                    changes[key] = value
+
+            if assigned_object_type and assigned_object_id:
+                has_assignment = (
+                    ip.get("assigned_object_type") == assigned_object_type
+                    and ip.get("assigned_object_id") == assigned_object_id
+                )
+                if not has_assignment:
+                    changes["assigned_object_type"] = assigned_object_type
+                    changes["assigned_object_id"] = assigned_object_id
+
+            if changes:
+                ip = self._patch(f"ipam/ip-addresses/{ip['id']}/", changes)
+            return ip
+
+        # DESATIVADO POR POLÍTICA - criação automática de IP não permitida.
+        # Código original preservado para rastreabilidade:
+        # return self._post("ipam/ip-addresses/", payload)
+        raise NetBoxError(
+            f"IP {address!r} ausente. Cadastre-o manualmente no NetBox."
+        )

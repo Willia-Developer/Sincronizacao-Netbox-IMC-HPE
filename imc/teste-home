@@ -1,0 +1,3 @@
+Dump de inventário removido do estado atual por conter dados internos.
+Não adicionar respostas reais de API ao repositório.
+Fixtures sintéticas ficam em tests/. Consulte docs/SEGURANCA.md para o histórico.

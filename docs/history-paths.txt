@@ -1,0 +1,14 @@
+imc/.env.example
+imc/testar_conexao_imc.py
+imc/teste-home
+COMO_INSTALAR_E_TESTAR.md
+README.md
+README.pdf
+SINCRONIZACAO_IMC_NETBOX.md
+SINCRONIZACAO_IMC_NETBOX.pdf
+imc/SINCRONIZACAO_IMC_NETBOX.md
+ALTERACOES_REALIZADAS.md
+ALTERACOES_REALIZADAS.pdf
+LISTA_DE_ARQUIVOS.md
+LISTA_DE_ARQUIVOS.pdf
+Requisitos-Permissoes-Dependencias-Servidor-Linux-IMC-NetBox.pdf
