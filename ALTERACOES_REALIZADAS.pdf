@@ -12,10 +12,32 @@ endobj
 << /Type /Page /Parent 2 0 R /MediaBox [0 0 612 792] /Resources << /Font << /F1 3 0 R >> >> /Contents 5 0 R >>
 endobj
 5 0 obj
-<< /Length 1159 >>
+<< /Length 2345 >>
 stream
 BT /F1 10 Tf 48 750 Td 14 TL
 (# Correções do piloto) Tj T*
+() Tj T*
+(## Entrega atual: preparação offline por etapas) Tj T*
+() Tj T*
+(Incorporada à pasta principal a implementação preparada na sessão anterior. O projeto) Tj T*
+(não depende da cópia temporária. Não há APIs iMC/NetBox disponíveis nesta fase; a) Tj T*
+(entrega foi validada com respostas simuladas.) Tj T*
+() Tj T*
+(- Scripts separados para conexão, descoberta, inspeção, comparação, simulação,) Tj T*
+(aplicação de um switch e produção futura.) Tj T*
+(- Laboratório limitado ao switch escolhido; produção consulta todos e registra) Tj T*
+(dispositivos ausentes no NetBox como descartes esperados.) Tj T*
+(- Grupo de VLAN opcional e confirmação por GET após PATCH, incluindo reconciliação de) Tj T*
+(timeout sem reenvio automático.) Tj T*
+(- 105 testes e 86 subtestes aprovados; documentação operacional e cinco PDFs) Tj T*
+(atualizados.) Tj T*
+(- Configuração local preservada; nenhum agendamento, acesso a APIs, commit ou push) Tj T*
+(executado nesta entrega.) Tj T*
+() Tj T*
+(Veja o guia de início \(docs/INICIO_DO_PROJETO.md\) e a validação atual) Tj T*
+(\(docs/VALIDACAO_ETAPAS.md\).) Tj T*
+() Tj T*
+(## Histórico da base do piloto) Tj T*
 () Tj T*
 (O fluxo ativo foi reduzido à descrição e VLAN de interfaces existentes, com GET no iMC) Tj T*
 (e GET/PATCH no NetBox, allowlist central, dry-run padrão e aplicação explícita.) Tj T*
@@ -29,8 +51,8 @@ BT /F1 10 Tf 48 750 Td 14 TL
 (incompletos/ambíguos.) Tj T*
 () Tj T*
 (Exemplos e documentação foram sanitizados, o dump interno foi substituído por aviso e) Tj T*
-(os PDFs foram regenerados. A credencial comprometida exige rotação manual; o histórico) Tj T*
-(não foi reescrito.) Tj T*
+(os PDFs foram regenerados. A credencial comprometida exige rotação manual; a limpeza) Tj T*
+(histórica é tratada separadamente, conforme o relatório.) Tj T*
 () Tj T*
 (Detalhes, resultados e pendências em relatório \(docs/RELATORIO_FINAL.md\). Contrato) Tj T*
 (completo em documentação técnica \(SINCRONIZACAO_IMC_NETBOX.md\).) Tj T*
@@ -47,5 +69,5 @@ xref
 0000000336 00000 n 
 trailer << /Size 6 /Root 1 0 R >>
 startxref
-1547
+2733
 %%EOF

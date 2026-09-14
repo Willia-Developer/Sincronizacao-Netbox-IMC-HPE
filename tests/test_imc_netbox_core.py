@@ -39,9 +39,14 @@ def fixture():
     imc.get_port_vlans.return_value = VlanState('access', 7, ())
     nb = NetBoxClient('https://netbox.example.test', 'fixture')
     nb.find_device = Mock(return_value={'id': 10, 'name': 'SW-LAB-01'})
-    nb.find_interface = Mock(side_effect=lambda *a: copy.deepcopy(current()))
+    state = current()
+    nb.find_interface = Mock(side_effect=lambda *a: copy.deepcopy(state))
     nb.find_vlan = Mock(side_effect=lambda value: {'id': value * 10, 'vid': value})
-    nb.session.request = Mock(return_value=response({}))
+    def send(method, url, **kwargs):
+        if method == 'PATCH':
+            state.update(kwargs['json'])
+        return response(copy.deepcopy(state))
+    nb.session.request = Mock(side_effect=send)
     return imc, nb
 
 def config():

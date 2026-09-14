@@ -12,8 +12,8 @@ def main():
     ARTIFACTS.mkdir(exist_ok=True)
     env = dict(os.environ)
     env['PATH'] = str(Path(sys.executable).parent) + os.pathsep + env.get('PATH', '')
-    checks = [('pytest', ['pytest', '-v']),
-              ('compileall', ['python3', '-m', 'compileall', '.']),
+    checks = [('pytest', [sys.executable, '-m', 'pytest', '-v']),
+              ('compileall', [sys.executable, '-m', 'compileall', '-q', 'imc', 'scripts', 'tests', 'sincronizacao_imc_netbox.py']),
               ('bash_requested', ['bash', '-n', *[str(p.relative_to(ROOT)) for p in sorted((ROOT/'imc').glob('*.sh'))]]),
               *[(p.stem, ['bash', '-n', str(p)]) for p in sorted((ROOT/'imc').glob('*.sh'))],
               ('mock_dry_run', [sys.executable, 'scripts/mock_dry_run.py']),

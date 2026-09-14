@@ -1,5 +1,7 @@
 # Validação offline
 
+> Relatório histórico da base anterior. Para a entrega por etapas, consulte [VALIDACAO_ETAPAS.md](VALIDACAO_ETAPAS.md).
+
 Versão corrigida do piloto: 74 testes aprovados.
 
 | Verificação | Resultado |

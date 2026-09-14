@@ -1,15 +1,45 @@
-# Requisitos do servidor do piloto
+# Requisitos de acesso — laboratório e produção
 
-Linux com Python 3.10+, Bash, flock e ambiente virtual. Instalar somente as dependências em requirements.txt. Não requer acesso administrativo para executar a sincronização.
+O projeto será apresentado aos responsáveis antes da aplicação no ambiente corporativo. O laboratório testa um switch selecionado. Em produção, lê todo o inventário IMC, compara nomes e atualiza somente interfaces existentes. Devices ausentes no NetBox são descartados e documentados nos logs.
 
-iMC: conta de serviço somente leitura e acesso GET aos endpoints de dispositivos, interfaces e VLANs documentados. NetBox: token para leitura e atualização de interfaces; a aplicação impõe allowlist de description, mode, untagged_vlan e tagged_vlans.
+## Servidor de execução
 
-Dispositivos, interfaces e VLANs precisam existir previamente. Nenhum objeto é criado/excluído e nenhum dispositivo é atualizado. Enabled, status, up/down, tipo, IP e MAC são ignorados.
+Linux, Python 3.10+, Bash e flock (util-linux). Instale as dependências de requirements.txt em ambiente virtual. Administração do servidor é necessária para provisionamento e instalação de pacotes quando não estiverem disponíveis; a execução usa usuário de serviço sem sudo.
 
-HTTPS com validação de certificado; CA interna configurável. Segredos em arquivo local protegido e ignorado pelo Git. Rotacionar a credencial exposta antes da validação.
+Reserve diretório de aplicação, ambiente virtual, arquivo .env protegido e logs com acesso restrito. Configure DNS, relógio sincronizado, certificados/CA interna e política de retenção dos logs. O script não abre portas de entrada.
 
-Execução manual única, dry-run padrão, aplicação com --apply e confirmação. Logs ativos com rotação e mascaramento. Concorrência bloqueada por flock. Sem cron até validar o piloto.
+## Matriz de comunicação para preencher no chamado
 
-Cronograma de referência: preparação 1 dia útil; análise 1 dia útil; desenvolvimento 5 dias úteis; testes 2 dias úteis. Total: 9 dias úteis.
+| Origem | Destino | Protocolo | Porta efetiva | Necessidade |
+| --- | --- | --- | --- | --- |
+| Servidor executor | API do IMC | HTTPS/TCP | Confirmar instalação; padrão do cliente 8443 | Obrigatória nas etapas IMC |
+| Servidor executor | API do NetBox | HTTPS/TCP | Definida em NETBOX_URL; 443 sem porta explícita | Obrigatória nas etapas NetBox |
+| Servidor executor | DNS corporativo | Conforme serviço DNS corporativo | Confirmar | Quando usar nomes |
+| Servidor executor | Serviço de horário corporativo | Conforme infraestrutura | Confirmar | Relógio confiável para logs/TLS |
+| Servidor executor | Repositório de dependências ou proxy | HTTPS ou protocolo aprovado | Confirmar | Instalação/atualização; pode usar pacotes offline |
+| Estação administrativa | Servidor executor | Acesso administrativo aprovado, por exemplo SSH | Confirmar | Provisionamento/manutenção, não comunicação do sincronizador |
 
-Não existe PPTX na árvore auditada; portanto não há slides disponíveis para editar ou avaliar como imagens. O escopo acima deve orientar eventual apresentação futura.
+Substituir os destinos e portas por valores reais antes de abrir o chamado. HTTP em laboratório exige configuração explícita e não protege o tráfego; portas incompatíveis são rejeitadas. Em HTTPS, validação TLS é obrigatória e CA interna pode ser configurada por IMC_CA_BUNDLE/NETBOX_CA_BUNDLE.
+
+Se houver proxy, verificar HTTP_PROXY, HTTPS_PROXY e NO_PROXY para as APIs internas. Não é necessário acesso à internet durante execução se dependências e endpoints estiverem disponíveis internamente.
+
+## Permissões das contas
+
+| Serviço / objeto | Leitura | Alteração | Criação/exclusão |
+| --- | --- | --- | --- |
+| IMC: dispositivos, interfaces e VLANs | GET | Não | Não |
+| NetBox: dcim.device | GET | Não | Não |
+| NetBox: dcim.interface | GET | PATCH, somente nas etapas de aplicação | Não |
+| NetBox: ipam.vlan | GET | Não | Não |
+
+Não é necessário privilégio administrativo global nos produtos. Para os primeiros testes, usar apenas leitura. Depois, conceder ao usuário/token permissão de alteração de interfaces do escopo aprovado. A allowlist de campos é imposta pelo código, não substitui as permissões e restrições do NetBox.
+
+Os campos possíveis são description, mode, untagged_vlan e tagged_vlans. Enabled, status, IP, MAC e dispositivos permanecem fora do fluxo de escrita. Dispositivos, interfaces e VLANs precisam ser provisionados previamente por processo separado.
+
+## Sequência de validação
+
+Seguir o [README oficial](README.md): conexão IMC, descoberta, inspeção do switch, conexão NetBox, comparação, simulação e aplicação controlada. Escolher grupo VLAN se necessário; conferir o significado de ifIndex, PVID e tagged/untagged na instalação real. Hybrid e dados inconclusivos são preservados.
+
+Após aprovação e testes, usar sincronizar_producao.py para todo o inventário. Cada execução é única; instalador cron permanece desativado nesta versão. O bloqueio por flock protege a mesma cópia do projeto, não cópias em servidores distintos.
+
+Credenciais ficam somente no .env protegido. A rotação de credenciais anteriormente expostas precisa de confirmação no sistema de origem; os testes offline não a comprovam.

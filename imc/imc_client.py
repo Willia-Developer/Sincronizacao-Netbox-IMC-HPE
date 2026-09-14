@@ -2,6 +2,7 @@
 from dataclasses import dataclass
 import xml.etree.ElementTree as ET
 import requests
+import logging
 from requests.auth import HTTPDigestAuth
 from policy import PolicyError, RestrictedSession
 
@@ -121,11 +122,18 @@ class IMCClient:
         vlans = {vid(r) for r in rows}
         if device_id not in self._modes:
             modes = []
+            unavailable = []
             for mode, element in (('access', 'accessIf'), ('trunk', 'trunkIf'), ('hybrid', 'hybridIf')):
-                for row in self.records(f'vlan/{mode}', element, devId=device_id):
-                    modes.append((mode, row))
-            self._modes[device_id] = modes
-        matches = [(m, r) for m, r in self._modes[device_id] if str(r.get('ifIndex')) == str(if_index)]
+                try:
+                    rows = list(self.records(f'vlan/{mode}', element, devId=device_id))
+                except IMCError as exc:
+                    unavailable.append(mode)
+                    logging.getLogger('pilot').warning('Endpoint VLAN %s indisponível: %s', mode, exc)
+                    continue
+                modes.extend((mode, row) for row in rows)
+            self._modes[device_id] = modes, unavailable
+        modes, unavailable = self._modes[device_id]
+        matches = [(m, r) for m, r in modes if str(r.get('ifIndex')) == str(if_index)]
         if len(matches) != 1:
             raise IMCError('Modo VLAN ausente/ambíguo; preservar interface')
         mode, row = matches[0]
@@ -136,6 +144,8 @@ class IMCClient:
             raise IMCError('Hybrid sem classificação tagged/untagged inequívoca; preservar interface')
         if mode == 'access' and vlans != {native}:
             raise IMCError('VLANs access inconsistentes')
+        if mode != 'access' and unavailable:
+            raise IMCError('Classificação trunk incompleta; preservar interface')
         return VlanState('access' if mode == 'access' else 'tagged', native,
                          tuple(sorted(vlans - {native})))
 

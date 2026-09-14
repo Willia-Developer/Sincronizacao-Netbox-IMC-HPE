@@ -108,13 +108,27 @@ def boolean(env, key, default='true'):
     return value == 'true'
 
 
-def configuration(env=None):
+def configuration(env=None, *, service=None):
     env = os.environ if env is None else env
-    for key in ('IMC_HOST', 'IMC_USERNAME', 'IMC_PASSWORD', 'NETBOX_URL', 'NETBOX_TOKEN'):
+    if service not in (None, 'IMC', 'NETBOX'):
+        raise PolicyError('Serviço de configuração inválido')
+    required = (('IMC_HOST', 'IMC_USERNAME', 'IMC_PASSWORD') if service == 'IMC'
+                else ('NETBOX_URL', 'NETBOX_TOKEN') if service == 'NETBOX'
+                else ('IMC_HOST', 'IMC_USERNAME', 'IMC_PASSWORD', 'NETBOX_URL', 'NETBOX_TOKEN'))
+    for key in required:
         value = env.get(key, '')
         if not value.strip() or any(p in value.lower() for p in
                 ('alterar_localmente', 'changeme', 'your_token', 'sua_senha', 'seu_token', 'placeholder', 'exemplo.local')):
             raise PolicyError(f'{key} ausente ou placeholder')
+    # Validar somente o serviço solicitado. Os placeholders internos abaixo
+    # nunca são retornados nem usados em chamadas de rede.
+    env = dict(env)
+    if service == 'IMC':
+        env.update(NETBOX_URL='https://unused.example.test', NETBOX_TOKEN='unused',
+                   NETBOX_VERIFY_SSL='true', NETBOX_CA_BUNDLE='', NETBOX_VLAN_GROUP_ID='')
+    elif service == 'NETBOX':
+        env.update(IMC_HOST='unused.example.test', IMC_USERNAME='unused', IMC_PASSWORD='unused',
+                   IMC_USE_HTTPS='true', IMC_PORT='8443', IMC_VERIFY_SSL='true', IMC_CA_BUNDLE='')
     host = env['IMC_HOST']
     if not re.fullmatch(r'[a-zA-Z0-9](?:[a-zA-Z0-9.-]*[a-zA-Z0-9])?', host):
         raise PolicyError('IMC_HOST inválido; use hostname ou IPv4 sem protocolo/porta')
@@ -141,17 +155,28 @@ def configuration(env=None):
     if not https or url.scheme != 'https':
         LOG.warning('HTTP sem TLS foi configurado explicitamente')
     verify = {}
-    for service in ('IMC', 'NETBOX'):
-        if not boolean(env, service + '_VERIFY_SSL'):
+    for target_service in ('IMC', 'NETBOX'):
+        if not boolean(env, target_service + '_VERIFY_SSL'):
             raise PolicyError('Desativar validação TLS não é permitido; configure CA interna')
-        ca = env.get(service + '_CA_BUNDLE')
+        ca = env.get(target_service + '_CA_BUNDLE')
         if ca and not Path(ca).is_file():
-            raise PolicyError(f'{service}_CA_BUNDLE não é arquivo')
-        verify[service] = ca or True
+            raise PolicyError(f'{target_service}_CA_BUNDLE não é arquivo')
+        verify[target_service] = ca or True
     if env.get('SYNC_INTERVAL', '0') != '0':
         raise PolicyError('SYNC_INTERVAL fora do escopo; execução única')
-    return ({'host': host, 'port': str(port), 'username': env['IMC_USERNAME'],
+    try:
+        group = int(env['NETBOX_VLAN_GROUP_ID']) if env.get('NETBOX_VLAN_GROUP_ID') else None
+    except ValueError:
+        raise PolicyError('NETBOX_VLAN_GROUP_ID deve ser um ID inteiro positivo') from None
+    if group is not None and group <= 0:
+        raise PolicyError('NETBOX_VLAN_GROUP_ID deve ser positivo')
+    settings = ({'host': host, 'port': str(port), 'username': env['IMC_USERNAME'],
              'password': env['IMC_PASSWORD'], 'use_https': https,
              'verify_ssl': verify['IMC'], 'request_timeout': timeout},
             {'base_url': env['NETBOX_URL'], 'token': env['NETBOX_TOKEN'],
-             'verify_ssl': verify['NETBOX'], 'request_timeout': timeout})
+             'verify_ssl': verify['NETBOX'], 'request_timeout': timeout, 'vlan_group_id': group})
+    if service == 'IMC':
+        return settings[0], None
+    if service == 'NETBOX':
+        return None, settings[1]
+    return settings

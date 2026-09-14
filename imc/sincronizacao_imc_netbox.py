@@ -17,9 +17,16 @@ def arguments(argv=None):
     group.add_argument('--dry-run', action='store_true')
     group.add_argument('--apply', action='store_true')
     parser.add_argument('--non-interactive', action='store_true')
+    scope = parser.add_mutually_exclusive_group()
+    scope.add_argument('--device', help='Nome exato de um único switch para o laboratório')
+    scope.add_argument('--all-devices', action='store_true', help='Inventário completo, para produção')
     args = parser.parse_args(argv)
     if args.non_interactive and not args.apply:
         parser.error('--non-interactive exige --apply')
+    if args.device is not None and not args.device.strip():
+        parser.error('--device exige nome não vazio')
+    if args.apply and not (args.device or args.all_devices):
+        parser.error('--apply exige --device NOME ou --all-devices')
     return args
 
 
@@ -28,6 +35,7 @@ def main(argv=None):
     formatter = setup_logging('apply' if args.apply else 'dry-run')
     imc = netbox = None
     summary = Summary()
+    started = summary.started
     try:
         with execution_lock():
             load_environment()
@@ -37,7 +45,10 @@ def main(argv=None):
             if args.apply and not args.non_interactive and not sys.stdin.isatty():
                 raise PolicyError('Aplicação interativa exige terminal; use --apply --non-interactive explicitamente')
             imc, netbox = IMCClient(**imc_settings), NetBoxClient(**nb_settings)
-            changes, summary = plan(imc, netbox)
+            LOG.info('Escopo: %s; grupo VLAN: %s', args.device or 'todos os dispositivos',
+                     nb_settings.get('vlan_group_id') or 'global (somente VID único)')
+            changes, summary = plan(imc, netbox, device_name=args.device)
+            summary.started = started
             execute(netbox, changes, summary, apply=args.apply, non_interactive=args.non_interactive)
             return 1 if summary.errors else 0
     except PolicyError as exc:

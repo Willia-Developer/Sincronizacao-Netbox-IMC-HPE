@@ -3,7 +3,7 @@
 << /Type /Catalog /Pages 2 0 R >>
 endobj
 2 0 obj
-<< /Type /Pages /Kids [4 0 R] /Count 1 >>
+<< /Type /Pages /Kids [4 0 R 6 0 R] /Count 2 >>
 endobj
 3 0 obj
 << /Type /Font /Subtype /Type1 /BaseFont /Courier /Encoding /WinAnsiEncoding >>
@@ -12,48 +12,110 @@ endobj
 << /Type /Page /Parent 2 0 R /MediaBox [0 0 612 792] /Resources << /Font << /F1 3 0 R >> >> /Contents 5 0 R >>
 endobj
 5 0 obj
-<< /Length 1614 >>
+<< /Length 2934 >>
 stream
 BT /F1 10 Tf 48 750 Td 14 TL
-(# Requisitos do servidor do piloto) Tj T*
+(# Requisitos de acesso - laboratório e produção) Tj T*
 () Tj T*
-(Linux com Python 3.10+, Bash, flock e ambiente virtual. Instalar somente as) Tj T*
-(dependências em requirements.txt. Não requer acesso administrativo para executar a) Tj T*
-(sincronização.) Tj T*
+(O projeto será apresentado aos responsáveis antes da aplicação no ambiente) Tj T*
+(corporativo. O laboratório testa um switch selecionado. Em produção, lê todo o) Tj T*
+(inventário IMC, compara nomes e atualiza somente interfaces existentes. Devices) Tj T*
+(ausentes no NetBox são descartados e documentados nos logs.) Tj T*
 () Tj T*
-(iMC: conta de serviço somente leitura e acesso GET aos endpoints de dispositivos,) Tj T*
-(interfaces e VLANs documentados. NetBox: token para leitura e atualização de) Tj T*
-(interfaces; a aplicação impõe allowlist de description, mode, untagged_vlan e) Tj T*
-(tagged_vlans.) Tj T*
+(## Servidor de execução) Tj T*
 () Tj T*
-(Dispositivos, interfaces e VLANs precisam existir previamente. Nenhum objeto é) Tj T*
-(criado/excluído e nenhum dispositivo é atualizado. Enabled, status, up/down, tipo, IP) Tj T*
-(e MAC são ignorados.) Tj T*
+(Linux, Python 3.10+, Bash e flock \(util-linux\). Instale as dependências de) Tj T*
+(requirements.txt em ambiente virtual. Administração do servidor é necessária para) Tj T*
+(provisionamento e instalação de pacotes quando não estiverem disponíveis; a execução) Tj T*
+(usa usuário de serviço sem sudo.) Tj T*
 () Tj T*
-(HTTPS com validação de certificado; CA interna configurável. Segredos em arquivo local) Tj T*
-(protegido e ignorado pelo Git. Rotacionar a credencial exposta antes da validação.) Tj T*
+(Reserve diretório de aplicação, ambiente virtual, arquivo .env protegido e logs com) Tj T*
+(acesso restrito. Configure DNS, relógio sincronizado, certificados/CA interna e) Tj T*
+(política de retenção dos logs. O script não abre portas de entrada.) Tj T*
 () Tj T*
-(Execução manual única, dry-run padrão, aplicação com --apply e confirmação. Logs) Tj T*
-(ativos com rotação e mascaramento. Concorrência bloqueada por flock. Sem cron até) Tj T*
-(validar o piloto.) Tj T*
+(## Matriz de comunicação para preencher no chamado) Tj T*
 () Tj T*
-(Cronograma de referência: preparação 1 dia útil; análise 1 dia útil; desenvolvimento 5) Tj T*
-(dias úteis; testes 2 dias úteis. Total: 9 dias úteis.) Tj T*
+(| Origem | Destino | Protocolo | Porta efetiva | Necessidade |) Tj T*
+(| --- | --- | --- | --- | --- |) Tj T*
+(| Servidor executor | API do IMC | HTTPS/TCP | Confirmar instalação; padrão do cliente) Tj T*
+(8443 | Obrigatória nas etapas IMC |) Tj T*
+(| Servidor executor | API do NetBox | HTTPS/TCP | Definida em NETBOX_URL; 443 sem) Tj T*
+(porta explícita | Obrigatória nas etapas NetBox |) Tj T*
+(| Servidor executor | DNS corporativo | Conforme serviço DNS corporativo | Confirmar |) Tj T*
+(Quando usar nomes |) Tj T*
+(| Servidor executor | Serviço de horário corporativo | Conforme infraestrutura |) Tj T*
+(Confirmar | Relógio confiável para logs/TLS |) Tj T*
+(| Servidor executor | Repositório de dependências ou proxy | HTTPS ou protocolo) Tj T*
+(aprovado | Confirmar | Instalação/atualização; pode usar pacotes offline |) Tj T*
+(| Estação administrativa | Servidor executor | Acesso administrativo aprovado, por) Tj T*
+(exemplo SSH | Confirmar | Provisionamento/manutenção, não comunicação do sincronizador) Tj T*
+(|) Tj T*
 () Tj T*
-(Não existe PPTX na árvore auditada; portanto não há slides disponíveis para editar ou) Tj T*
-(avaliar como imagens. O escopo acima deve orientar eventual apresentação futura.) Tj T*
-ET BT /F1 9 Tf 48 32 Td (Piloto iMC - NetBox | 1/1) Tj ET
+(Substituir os destinos e portas por valores reais antes de abrir o chamado. HTTP em) Tj T*
+(laboratório exige configuração explícita e não protege o tráfego; portas incompatíveis) Tj T*
+(são rejeitadas. Em HTTPS, validação TLS é obrigatória e CA interna pode ser) Tj T*
+(configurada por IMC_CA_BUNDLE/NETBOX_CA_BUNDLE.) Tj T*
+() Tj T*
+(Se houver proxy, verificar HTTP_PROXY, HTTPS_PROXY e NO_PROXY para as APIs internas.) Tj T*
+(Não é necessário acesso à internet durante execução se dependências e endpoints) Tj T*
+(estiverem disponíveis internamente.) Tj T*
+() Tj T*
+(## Permissões das contas) Tj T*
+() Tj T*
+(| Serviço / objeto | Leitura | Alteração | Criação/exclusão |) Tj T*
+(| --- | --- | --- | --- |) Tj T*
+ET BT /F1 9 Tf 48 32 Td (Piloto iMC - NetBox | 1/2) Tj ET
+endstream
+endobj
+6 0 obj
+<< /Type /Page /Parent 2 0 R /MediaBox [0 0 612 792] /Resources << /Font << /F1 3 0 R >> >> /Contents 7 0 R >>
+endobj
+7 0 obj
+<< /Length 1829 >>
+stream
+BT /F1 10 Tf 48 750 Td 14 TL
+(| IMC: dispositivos, interfaces e VLANs | GET | Não | Não |) Tj T*
+(| NetBox: dcim.device | GET | Não | Não |) Tj T*
+(| NetBox: dcim.interface | GET | PATCH, somente nas etapas de aplicação | Não |) Tj T*
+(| NetBox: ipam.vlan | GET | Não | Não |) Tj T*
+() Tj T*
+(Não é necessário privilégio administrativo global nos produtos. Para os primeiros) Tj T*
+(testes, usar apenas leitura. Depois, conceder ao usuário/token permissão de alteração) Tj T*
+(de interfaces do escopo aprovado. A allowlist de campos é imposta pelo código, não) Tj T*
+(substitui as permissões e restrições do NetBox.) Tj T*
+() Tj T*
+(Os campos possíveis são description, mode, untagged_vlan e tagged_vlans. Enabled,) Tj T*
+(status, IP, MAC e dispositivos permanecem fora do fluxo de escrita. Dispositivos,) Tj T*
+(interfaces e VLANs precisam ser provisionados previamente por processo separado.) Tj T*
+() Tj T*
+(## Sequência de validação) Tj T*
+() Tj T*
+(Seguir o README oficial \(README.md\): conexão IMC, descoberta, inspeção do switch,) Tj T*
+(conexão NetBox, comparação, simulação e aplicação controlada. Escolher grupo VLAN se) Tj T*
+(necessário; conferir o significado de ifIndex, PVID e tagged/untagged na instalação) Tj T*
+(real. Hybrid e dados inconclusivos são preservados.) Tj T*
+() Tj T*
+(Após aprovação e testes, usar sincronizar_producao.py para todo o inventário. Cada) Tj T*
+(execução é única; instalador cron permanece desativado nesta versão. O bloqueio por) Tj T*
+(flock protege a mesma cópia do projeto, não cópias em servidores distintos.) Tj T*
+() Tj T*
+(Credenciais ficam somente no .env protegido. A rotação de credenciais anteriormente) Tj T*
+(expostas precisa de confirmação no sistema de origem; os testes offline não a) Tj T*
+(comprovam.) Tj T*
+ET BT /F1 9 Tf 48 32 Td (Piloto iMC - NetBox | 2/2) Tj ET
 endstream
 endobj
 xref
-0 6
+0 8
 0000000000 65535 f 
 0000000009 00000 n 
 0000000058 00000 n 
-0000000115 00000 n 
-0000000210 00000 n 
-0000000336 00000 n 
-trailer << /Size 6 /Root 1 0 R >>
+0000000121 00000 n 
+0000000216 00000 n 
+0000000342 00000 n 
+0000003328 00000 n 
+0000003454 00000 n 
+trailer << /Size 8 /Root 1 0 R >>
 startxref
-2002
+5335
 %%EOF

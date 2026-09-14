@@ -13,7 +13,7 @@ def main():
             load_environment()
             formatter.secrets.extend(os.environ.get(k, '') for k in
                                      ('IMC_PASSWORD', 'NETBOX_TOKEN', 'IMC_USERNAME') if os.environ.get(k))
-            imc_settings, _ = configuration()
+            imc_settings, _ = configuration(service='IMC')
             client = IMCClient(**imc_settings)
             client.login()
             LOG.info('Consulta GET iMC concluída')

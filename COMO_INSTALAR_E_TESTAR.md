@@ -1,14 +1,21 @@
 # Instalação e testes
 
+Esta entrega está em preparação offline, sem APIs iMC/NetBox disponíveis. Configuração de credenciais e testes de conexão ficam para o início futuro do laboratório. Veja o [guia de início](docs/INICIO_DO_PROJETO.md).
+
 ## Ambiente
 
-Python 3.10 ou superior, Bash e flock (util-linux). Runtime usa requests; pytest é usado na validação. Dependências têm intervalos controlados em requirements.txt.
+Python 3.10 ou superior, Bash e flock (util-linux). Runtime usa requests; pytest é usado na validação. O verificador completo também requer Git e pdftotext (poppler-utils). Dependências têm intervalos controlados em requirements.txt.
 
 ```bash
 python3 -m venv .venv
 source .venv/bin/activate
 python -m pip install -r requirements.txt
-cp imc/.env.example imc/.env
+```
+
+Somente quando for configurar os serviços para o laboratório:
+
+```bash
+test -f imc/.env || cp imc/.env.example imc/.env
 chmod 600 imc/.env
 ```
 
@@ -22,15 +29,9 @@ NETBOX_URL deve conter apenas a origem, sem /api. IMC_HOST deve ser hostname ou 
 
 ```bash
 source .venv/bin/activate
-pytest -v
-python3 -m compileall .
-bash -n imc/executar_sincronizacao.sh
-bash -n imc/instalar_cron.sh
-bash -n imc/desinstalar_cron.sh
-python3 -m unittest discover -s tests -v
-python3 scripts/mock_dry_run.py
+python3 scripts/validate.py
+# Auditoria local opcional, separada dos testes funcionais:
 python3 scripts/audit_security.py
-git diff --check
 ```
 
 A suíte usa apenas mocks. O exemplo mockado bloqueia qualquer tentativa de rede. A auditoria consulta somente arquivos e histórico Git local, apresentando metadados sem valores sensíveis.
@@ -43,16 +44,22 @@ Rotacione primeiro a credencial iMC exposta. Configure contas com privilégio m�
 
 ```bash
 source .venv/bin/activate
-python3 sincronizacao_imc_netbox.py --dry-run
-python3 sincronizacao_imc_netbox.py --apply
+python imc/testar_conexao_imc.py
+python imc/listar_dispositivos_imc.py
+python imc/inspecionar_switch_imc.py --device "SW-LAB-01"
+python imc/testar_conexao_netbox.py
+python imc/comparar_dispositivos.py
+python imc/simular_switch.py --device "SW-LAB-01"
+# Depois de revisar a simulação:
+python imc/aplicar_switch.py --device "SW-LAB-01"
 ```
 
 Confira o plano antes de responder SIM. Para execução por wrapper:
 
 ```bash
-IMC_PYTHON_BIN="$PWD/.venv/bin/python" bash imc/executar_sincronizacao.sh --dry-run
+IMC_PYTHON_BIN="$PWD/.venv/bin/python" bash imc/executar_sincronizacao.sh --device "SW-LAB-01" --dry-run
 ```
 
-Apenas após validação poderá ser usada a opção explícita `--apply --non-interactive`. O instalador cron permanece desativado no piloto. O script `imc/testar_conexao_imc.py` também é manual, usa GET e não imprime inventário; ele valida a configuração completa antes da consulta.
+Apenas após validação poderá ser usada a entrada de produção: `python imc/sincronizar_producao.py --dry-run`. Aplicação explícita: `--apply`; sem prompt: `--apply --non-interactive`. O instalador cron permanece desativado. As etapas de conexão, listagem e inspeção do IMC exigem somente configuração do IMC. Consulte o [README oficial](README.md) para escopos, logs e sequência completa.
 
 Consulte [contrato](SINCRONIZACAO_IMC_NETBOX.md) e [segurança](docs/SEGURANCA.md).

@@ -12,7 +12,7 @@ endobj
 << /Type /Page /Parent 2 0 R /MediaBox [0 0 612 792] /Resources << /Font << /F1 3 0 R >> >> /Contents 5 0 R >>
 endobj
 5 0 obj
-<< /Length 1684 >>
+<< /Length 2680 >>
 stream
 BT /F1 10 Tf 48 750 Td 14 TL
 (# Mapa de arquivos) Tj T*
@@ -31,10 +31,24 @@ BT /F1 10 Tf 48 750 Td 14 TL
 (| imc/instalar_cron.sh | Agendamento desativado no piloto |) Tj T*
 (| imc/desinstalar_cron.sh | Remoção manual do agendamento legado |) Tj T*
 (| imc/testar_conexao_imc.py | Teste manual GET sem credenciais fixas |) Tj T*
+(| imc/listar_dispositivos_imc.py | Lista IDs e nomes do inventário IMC |) Tj T*
+(| imc/inspecionar_switch_imc.py | Consulta interfaces/VLANs de um switch escolhido |) Tj T*
+(| imc/testar_conexao_netbox.py | Testa leitura dos três objetos necessários no NetBox) Tj T*
+(|) Tj T*
+(| imc/comparar_dispositivos.py | Compara inventários; registra ausentes sem erro |) Tj T*
+(| imc/simular_switch.py | Dry-run de um único switch obrigatório |) Tj T*
+(| imc/aplicar_switch.py | Aplicação do switch com confirmação interativa |) Tj T*
+(| imc/sincronizar_producao.py | Inventário completo, dry-run padrão e aplicação) Tj T*
+(explícita |) Tj T*
+(| imc/etapas.py | Implementação compartilhada das etapas e argumentos |) Tj T*
 (| imc/.env.example | Configuração fictícia |) Tj T*
 (| imc/teste-home | Aviso em substituição ao dump interno |) Tj T*
 (| tests/ | Testes com mocks |) Tj T*
 (| scripts/mock_dry_run.py | Demonstração offline |) Tj T*
+(| scripts/validate.py | Verificações offline consolidadas e artifacts/validation.json) Tj T*
+(|) Tj T*
+(| docs/INICIO_DO_PROJETO.md | Preparação atual e roteiro de execução futura |) Tj T*
+(| docs/VALIDACAO_ETAPAS.md | Evidências da entrega incorporada à pasta principal |) Tj T*
 (| scripts/audit_security.py | Auditoria do histórico sem segredos na saída |) Tj T*
 (| scripts/render_pdfs.py | Geração local dos PDFs derivados dos Markdown |) Tj T*
 (| docs/ | Relatório, auditoria histórica e procedimento de segurança |) Tj T*
@@ -55,5 +69,5 @@ xref
 0000000336 00000 n 
 trailer << /Size 6 /Root 1 0 R >>
 startxref
-2072
+3068
 %%EOF

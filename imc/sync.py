@@ -1,6 +1,8 @@
 """Planejamento completo antes da autorização; comparação mínima por interface."""
 from dataclasses import dataclass, field
 import logging
+import time
+from netbox_client import NotFound, Ambiguous, PatchUncertain
 
 from imc_client import VlanState, vid
 from policy import PolicyError, positive_id, validate_patch
@@ -64,7 +66,10 @@ def differences(source_description, vlans, current, netbox):
     tagged = {vid(v) for v in vlans.tagged}
     if native in tagged or (vlans.mode == 'access' and tagged):
         raise PolicyError('VLAN iMC inconsistente')
-    resolved = {v: positive_id(netbox.find_vlan(v)['id']) for v in sorted(tagged | {native})}
+    try:
+        resolved = {v: positive_id(netbox.find_vlan(v)['id']) for v in sorted(tagged | {native})}
+    except NotFound as exc:
+        raise MissingVlan(str(exc)) from exc
     LOG.info('VLANs confirmadas VID -> ID NetBox: %s', resolved)
     desired = {'mode': vlans.mode, 'untagged_vlan': resolved[native],
                'tagged_vlans': sorted({resolved[v] for v in tagged})}
@@ -81,6 +86,19 @@ def differences(source_description, vlans, current, netbox):
 
 @dataclass
 class Summary:
+    started: float = field(default_factory=time.monotonic, repr=False)
+    devices_not_found: int = 0
+    devices_filtered: int = 0
+    interfaces_found: int = 0
+    interfaces_not_found: int = 0
+    vlans_not_found: int = 0
+    ambiguities: int = 0
+    accepted: int = 0
+    uncertain: int = 0
+    unconfirmed: int = 0
+    interfaces_simulated: int = 0
+    devices_skipped: int = 0
+    interfaces_skipped: int = 0
     devices: int = 0
     devices_found: int = 0
     interfaces: int = 0
@@ -93,7 +111,12 @@ class Summary:
     fields: set = field(default_factory=set)
 
     def report(self):
-        return {**self.__dict__, 'fields': sorted(self.fields)}
+        return {**{k: v for k, v in self.__dict__.items() if k != 'started'},
+                'fields': sorted(self.fields), 'duration_seconds': round(time.monotonic() - self.started, 3)}
+
+
+class MissingVlan(NotFound):
+    pass
 
 
 @dataclass
@@ -112,23 +135,34 @@ def source_id(value):
     return positive_id(value)
 
 
-def plan(imc, netbox):
+def plan(imc, netbox, *, device_name=None):
     summary, changes, targets = Summary(), [], set()
     devices = list(imc.iter_devices())
     summary.devices = len(devices)
     # Duplicate source names are unsafe too, even when NetBox is unique.
     names = [first_present(d, ('sysName', 'label', 'name'), '') for d in devices]
     for device, name in zip(devices, names):
+        if device_name is not None and name != device_name:
+            summary.devices_filtered += 1
+            continue
         try:
             if not isinstance(name, str) or not name.strip() or names.count(name) != 1:
-                raise PolicyError('Nome iMC ausente/ambíguo; sem fallback por IP')
+                raise Ambiguous('Nome iMC ausente/ambíguo; sem fallback por IP')
             device_id = source_id(first_present(device, ('id', 'deviceId')))
             nb_device = netbox.find_device(name)
             summary.devices_found += 1
             LOG.info('Dispositivo encontrado: %s', name)
             interfaces = list(imc.iter_interfaces(device_id))
             summary.interfaces += len(interfaces)
+        except NotFound:
+            summary.devices_not_found += 1
+            summary.devices_skipped += 1
+            summary.skipped += 1
+            LOG.info('Dispositivo ausente no NetBox; descartado: %s', name)
+            continue
         except (PolicyError, ValueError, TypeError, KeyError) as exc:
+            summary.ambiguities += int(isinstance(exc, Ambiguous))
+            summary.devices_skipped += 1
             summary.skipped += 1
             summary.errors += 1
             LOG.warning('Dispositivo ignorado %s: %s', name if isinstance(name, str) else '[inválido]', exc)
@@ -137,9 +171,10 @@ def plan(imc, netbox):
         for iface, iface_name in zip(interfaces, interface_names):
             try:
                 if not isinstance(iface_name, str) or not iface_name.strip() or interface_names.count(iface_name) != 1:
-                    raise PolicyError('Nome de interface ausente/ambíguo')
+                    raise Ambiguous('Nome de interface ausente/ambíguo')
                 LOG.info('Interface consultada: %s / %s', name, iface_name)
                 current = netbox.find_interface(nb_device['id'], iface_name)
+                summary.interfaces_found += 1
                 target = positive_id(current['id'])
                 if target in targets:
                     raise PolicyError('Interface NetBox repetida no planejamento')
@@ -161,10 +196,17 @@ def plan(imc, netbox):
                              name, iface_name, key, before[key], value)
                 LOG.info('Payload validado %s / %s: %s', name, iface_name, payload)
             except (PolicyError, ValueError, TypeError, KeyError) as exc:
+                summary.vlans_not_found += int(isinstance(exc, MissingVlan))
+                summary.interfaces_not_found += int(isinstance(exc, NotFound) and not isinstance(exc, MissingVlan))
+                summary.ambiguities += int(isinstance(exc, Ambiguous))
+                summary.interfaces_skipped += 1
                 summary.skipped += 1
                 summary.errors += 1
                 LOG.warning('Interface ignorada %s / %s: %s', name, iface_name, exc)
     summary.planned = len(changes)
+    if device_name is not None and device_name not in names:
+        summary.errors += 1
+        LOG.error('Switch selecionado não encontrado no IMC: %s', device_name)
     LOG.info('Resumo prévio: %s', summary.report())
     return changes, summary
 
@@ -173,6 +215,8 @@ def execute(netbox, changes, summary, *, apply=False, non_interactive=False, con
     if non_interactive and not apply:
         raise PolicyError('--non-interactive exige --apply')
     if not apply or not changes:
+        if not apply:
+            summary.interfaces_simulated = len(changes)
         return summary
     if not non_interactive and confirm('Aplicar os PATCHes apresentados? Digite SIM: ') != 'SIM':
         LOG.info('Aplicação cancelada; nenhum PATCH enviado')
@@ -181,17 +225,29 @@ def execute(netbox, changes, summary, *, apply=False, non_interactive=False, con
     netbox.session.apply = True
     try:
         for change in changes:
+            sent = False
             try:
                 validate_patch(change.payload)
                 current = netbox.find_interface(change.device_id, change.interface)
                 if current['id'] != change.interface_id or snapshot(current) != change.before:
                     raise PolicyError('NetBox mudou após planejamento; preservar e executar novo dry-run')
-                netbox.patch_interface(change.interface_id, change.payload)
+                try:
+                    sent = True
+                    netbox.patch_interface(change.interface_id, change.payload)
+                    summary.accepted += 1
+                except PatchUncertain:
+                    summary.uncertain += 1
+                    LOG.warning('PATCH incerto; conferindo estado por GET, sem reenvio')
+                final = netbox.find_interface(change.device_id, change.interface)
+                if final['id'] != change.interface_id or any(
+                        snapshot(final)[k] != v for k, v in change.payload.items()):
+                    raise PolicyError('Alteração não confirmada após PATCH; revisar novo dry-run')
                 summary.applied += 1
                 for key, value in change.payload.items():
                     LOG.info('PATCH sucesso %s / %s campo=%s anterior=%r proposto=%r',
                              change.device, change.interface, key, change.before[key], value)
             except (PolicyError, ValueError, TypeError, KeyError) as exc:
+                summary.unconfirmed += int(sent)
                 summary.errors += 1
                 LOG.error('PATCH falhou/bloqueado %s / %s: %s', change.device, change.interface, exc)
     finally:

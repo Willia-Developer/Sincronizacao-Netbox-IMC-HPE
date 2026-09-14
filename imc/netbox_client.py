@@ -4,9 +4,19 @@ from policy import PolicyError, RestrictedSession, positive_id, validate_patch
 
 NetBoxError = PolicyError
 
+class NotFound(PolicyError):
+    pass
+
+class Ambiguous(PolicyError):
+    pass
+
+class PatchUncertain(PolicyError):
+    pass
+
 class NetBoxClient:
     def __init__(self, base_url, token, *, verify_ssl=True, request_timeout=30,
-                 proxies=None, apply=False):
+                 proxies=None, apply=False, vlan_group_id=None):
+        self.vlan_group_id = positive_id(vlan_group_id) if vlan_group_id is not None else None
         self.base_url = base_url.rstrip('/') + '/api/'
         self.session = RestrictedSession(self.base_url, netbox=True, apply=apply)
         self.session.verify = verify_ssl
@@ -26,8 +36,12 @@ class NetBoxClient:
             response = self.session.request(method, url, timeout=self.timeout,
                                             allow_redirects=False, **kwargs)
         except requests.Timeout:
+            if method == 'PATCH':
+                raise PatchUncertain('Timeout após envio PATCH; reconciliar por GET, sem repetir automaticamente') from None
             raise NetBoxError('Timeout NetBox') from None
         except requests.RequestException:
+            if method == 'PATCH':
+                raise PatchUncertain('Comunicação interrompida após PATCH; resultado incerto') from None
             raise NetBoxError('Falha de comunicação NetBox') from None
         if not 200 <= response.status_code < 300:
             raise NetBoxError(f'NetBox HTTP {response.status_code}')
@@ -61,7 +75,7 @@ class NetBoxClient:
     def exact(self, endpoint, field, value, **filters):
         rows = [r for r in self.records(endpoint, **{field: value}, **filters) if r.get(field) == value]
         if len(rows) != 1:
-            raise NetBoxError('correspondência ambígua' if rows else 'objeto não encontrado no NetBox')
+            raise (Ambiguous('correspondência ambígua') if rows else NotFound('objeto não encontrado no NetBox'))
         return rows[0]
 
     def find_device(self, name):
@@ -78,9 +92,13 @@ class NetBoxClient:
         return row
 
     def find_vlan(self, vid):
-        rows = [r for r in self.records('ipam/vlans/', vid=vid) if str(r.get('vid')) == str(vid)]
+        filters = {'group_id': self.vlan_group_id} if self.vlan_group_id is not None else {}
+        rows = [r for r in self.records('ipam/vlans/', vid=vid, **filters) if str(r.get('vid')) == str(vid)]
+        if self.vlan_group_id is not None:
+            rows = [r for r in rows if isinstance(r.get('group'), dict)
+                    and r['group'].get('id') == self.vlan_group_id]
         if len(rows) != 1:
-            raise NetBoxError(f'VLAN {vid}: ' + ('correspondência ambígua' if rows else 'VLAN não encontrada'))
+            raise (Ambiguous(f'VLAN {vid}: correspondência ambígua') if rows else NotFound(f'VLAN não encontrada: {vid}'))
         return rows[0]
 
     def patch_interface(self, interface_id, changes):

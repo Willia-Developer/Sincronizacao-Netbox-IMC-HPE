@@ -1,5 +1,7 @@
 # Relatório do piloto e preparação da publicação
 
+> Relatório histórico. A situação atual é preparação offline sem APIs disponíveis; veja [INICIO_DO_PROJETO.md](INICIO_DO_PROJETO.md) e [VALIDACAO_ETAPAS.md](VALIDACAO_ETAPAS.md). Menções abaixo à publicação e aos 74 testes pertencem à etapa anterior e não certificam uma publicação desta entrega.
+
 ## Resultado técnico
 
 O fluxo ativo usa o iMC como única fonte da verdade e altera somente descrição/VLAN das interfaces existentes no NetBox.
