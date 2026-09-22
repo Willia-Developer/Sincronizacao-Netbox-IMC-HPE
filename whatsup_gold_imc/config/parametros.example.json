@@ -1,0 +1,81 @@
+{
+  "schema_version": "proposta-1",
+  "status": "planejamento_sem_implementacao",
+  "execution_enabled": false,
+  "inventory_read_only": true,
+  "sources": {
+    "whatsup_gold": {
+      "installed_version": null,
+      "base_url": null,
+      "api_contract_validated": false,
+      "verify_tls": true,
+      "ca_bundle": null,
+      "username_env": "AUDIT_WUG_USERNAME",
+      "password_env": "AUDIT_WUG_PASSWORD",
+      "authentication_endpoint": null,
+      "inventory_endpoints": [],
+      "field_mapping": {}
+    },
+    "imc": {
+      "installed_version": null,
+      "base_url": null,
+      "api_contract_validated": false,
+      "verify_tls": true,
+      "ca_bundle": null,
+      "username_env": "AUDIT_IMC_USERNAME",
+      "password_env": "AUDIT_IMC_PASSWORD",
+      "authentication_method": null,
+      "inventory_endpoints": [],
+      "field_mapping": {}
+    }
+  },
+  "scope": {
+    "confirmed": false,
+    "device_classes": ["switch"],
+    "allow_all_devices": false,
+    "whatsup_gold_device_ids": [],
+    "imc_device_ids": [],
+    "context_mapping": [],
+    "minimum_devices_per_source": 1
+  },
+  "matching": {
+    "manual_pairs": [],
+    "rules_in_order": [
+      "reviewed_manual_pair_without_identity_conflict",
+      "unique_manufacturer_serial_entity_context",
+      "unique_technical_name_management_ip_context_without_serial_conflict"
+    ],
+    "name_only_is_candidate": true,
+    "ip_only_is_candidate": true,
+    "require_one_to_one": true,
+    "strip_dns_domain": false,
+    "ignore_name_case": false
+  },
+  "comparison": {
+    "required_fields": ["technical_name", "management_ip"],
+    "candidate_fields": ["manufacturer", "model", "serial_number", "location"],
+    "interfaces_enabled": false,
+    "vlans_enabled": false,
+    "operational_state_enabled": false,
+    "require_complete_scope": true,
+    "require_observed_at_for_required_fields": true,
+    "max_observation_age_seconds": null,
+    "max_observation_skew_seconds": null,
+    "missing_is_equal": false
+  },
+  "collection_limits_proposed": {
+    "request_timeout_seconds": 30,
+    "max_run_seconds": 300,
+    "max_pages_per_source": 100,
+    "max_records_per_source": 10000,
+    "max_response_bytes": 10485760,
+    "max_get_retries": 2,
+    "concurrency": 1
+  },
+  "local_paths_relative_to_project": {
+    "snapshots": "dados",
+    "reports": "relatorios",
+    "logs": "logs"
+  },
+  "report_formats_planned": ["json", "markdown"]
+}

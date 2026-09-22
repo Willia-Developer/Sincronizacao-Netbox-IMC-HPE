@@ -1,0 +1,13 @@
+# Configuração e dados reais pertencem apenas ao ambiente local.
+.env
+.env.*
+!.env.example
+/config/*.local.*
+/dados/
+/relatorios/
+/logs/
+/artifacts/
+/.venv/
+/.audit.lock
+__pycache__/
+.pytest_cache/
