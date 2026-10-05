@@ -1,73 +1,74 @@
 %PDF-1.4
+%“Œ‹ž ReportLab Generated PDF document (opensource)
 1 0 obj
-<< /Type /Catalog /Pages 2 0 R >>
+<<
+/F1 2 0 R /F2 3 0 R
+>>
 endobj
 2 0 obj
-<< /Type /Pages /Kids [4 0 R] /Count 1 >>
+<<
+/BaseFont /Helvetica /Encoding /WinAnsiEncoding /Name /F1 /Subtype /Type1 /Type /Font
+>>
 endobj
 3 0 obj
-<< /Type /Font /Subtype /Type1 /BaseFont /Courier /Encoding /WinAnsiEncoding >>
+<<
+/BaseFont /Helvetica-Bold /Encoding /WinAnsiEncoding /Name /F2 /Subtype /Type1 /Type /Font
+>>
 endobj
 4 0 obj
-<< /Type /Page /Parent 2 0 R /MediaBox [0 0 612 792] /Resources << /Font << /F1 3 0 R >> >> /Contents 5 0 R >>
+<<
+/Contents 8 0 R /MediaBox [ 0 0 595.2756 841.8898 ] /Parent 7 0 R /Resources <<
+/Font 1 0 R /ProcSet [ /PDF /Text /ImageB /ImageC /ImageI ]
+>> /Rotate 0 /Trans <<
+
+>> 
+  /Type /Page
+>>
 endobj
 5 0 obj
-<< /Length 2345 >>
+<<
+/PageMode /UseNone /Pages 7 0 R /Type /Catalog
+>>
+endobj
+6 0 obj
+<<
+/Author (Projeto WhatsUp Gold - NetBox) /CreationDate (D:20261006000142+09'00') /Creator (\(unspecified\)) /Keywords () /ModDate (D:20261006000142+09'00') /Producer (ReportLab PDF Library - \(opensource\)) 
+  /Subject (\(unspecified\)) /Title (ALTERACOES_REALIZADAS) /Trapped /False
+>>
+endobj
+7 0 obj
+<<
+/Count 1 /Kids [ 4 0 R ] /Type /Pages
+>>
+endobj
+8 0 obj
+<<
+/Filter [ /ASCII85Decode /FlateDecode ] /Length 1257
+>>
 stream
-BT /F1 10 Tf 48 750 Td 14 TL
-(# Correções do piloto) Tj T*
-() Tj T*
-(## Entrega atual: preparação offline por etapas) Tj T*
-() Tj T*
-(Incorporada à pasta principal a implementação preparada na sessão anterior. O projeto) Tj T*
-(não depende da cópia temporária. Não há APIs iMC/NetBox disponíveis nesta fase; a) Tj T*
-(entrega foi validada com respostas simuladas.) Tj T*
-() Tj T*
-(- Scripts separados para conexão, descoberta, inspeção, comparação, simulação,) Tj T*
-(aplicação de um switch e produção futura.) Tj T*
-(- Laboratório limitado ao switch escolhido; produção consulta todos e registra) Tj T*
-(dispositivos ausentes no NetBox como descartes esperados.) Tj T*
-(- Grupo de VLAN opcional e confirmação por GET após PATCH, incluindo reconciliação de) Tj T*
-(timeout sem reenvio automático.) Tj T*
-(- 105 testes e 86 subtestes aprovados; documentação operacional e cinco PDFs) Tj T*
-(atualizados.) Tj T*
-(- Configuração local preservada; nenhum agendamento, acesso a APIs, commit ou push) Tj T*
-(executado nesta entrega.) Tj T*
-() Tj T*
-(Veja o guia de início \(docs/INICIO_DO_PROJETO.md\) e a validação atual) Tj T*
-(\(docs/VALIDACAO_ETAPAS.md\).) Tj T*
-() Tj T*
-(## Histórico da base do piloto) Tj T*
-() Tj T*
-(O fluxo ativo foi reduzido à descrição e VLAN de interfaces existentes, com GET no iMC) Tj T*
-(e GET/PATCH no NetBox, allowlist central, dry-run padrão e aplicação explícita.) Tj T*
-() Tj T*
-(Foram removidos do fluxo status, enabled, tipo físico, IP, MAC, metadados de) Tj T*
-(dispositivos e criação de objetos. Referência histórica de criação permanece inativa) Tj T*
-(em imc/legacy/netbox_client.py.disabled.) Tj T*
-() Tj T*
-(Foram acrescentados configuração validada, TLS verificado, logs com rotação e) Tj T*
-(mascaramento, controle de concorrência, testes com mocks e proteção contra dados) Tj T*
-(incompletos/ambíguos.) Tj T*
-() Tj T*
-(Exemplos e documentação foram sanitizados, o dump interno foi substituído por aviso e) Tj T*
-(os PDFs foram regenerados. A credencial comprometida exige rotação manual; a limpeza) Tj T*
-(histórica é tratada separadamente, conforme o relatório.) Tj T*
-() Tj T*
-(Detalhes, resultados e pendências em relatório \(docs/RELATORIO_FINAL.md\). Contrato) Tj T*
-(completo em documentação técnica \(SINCRONIZACAO_IMC_NETBOX.md\).) Tj T*
-ET BT /F1 9 Tf 48 32 Td (Piloto iMC - NetBox | 1/1) Tj ET
-endstream
+Gat=)?#SIW&:Dg-fLP[t./LC-!XH51'BJ(Ed`--2nj6!V_]C6VPaDi1qscTqImhE?)P@XX5pEj$1HW4+.)Zkns.pn8\=hm2Ln^7P.uMatV8\rg/ImAPOX<pt5nT1,/Af*8I5sBf.?,d9aAA0K5s3G5IaW=dY`2Y%W(E*>+sh5njV&!L0U]j6mR<XV$+Vo8LphO>1WD^JU[P[dCVMcLAp$O4^XIo'52$8<LLrJ:SlBHAl!A%'M9:ueXgG+i#J.=_C:b6?8NOjEZ.-k+P'&/0dGbB_IUaXUFBMd$Z[A)r)Jm#IfRkYeS<&;sQkU)>$UH`YUIe3H*(AmM,B1iSaU9RAAK:=:'U0fm,4;:`_I-7e$'lABNMa:ND@8DLA4o[Le>&s191NOBg'tP#-.r;^H57$q5N@&"4j=5Y_g^QoOMV!+Dh*e/N\9\3+R@N\ReP-k#BV0E:=YYJP&Xa-dS_A_[\ZonGeYh15aQTlkDWT<#W5e"s+!^!TN`mM$QTY_rX\4?P.h5`Gnp!L(dr@KjC;Bk9qtYQKHX3l5%eG2.^`_Md.a_V<*HC!%aV-pkj1QpR2j(,DP]1R1SU#K@&H.5@k4MjWg:A?[QW\2N>PW0a"6R31tGMQ9S8P8q)O%A!Tj<j^:YR[*HIk?>6bBigVV_!?'=Z@<ZT%H:*D!X3"NYkd]2I7__fZq9AjB-H_ZY[Tr*>6F.q(X(PNo9Gcd$\Df:diY"L(>JT0&n"'!ft@B[]Vd`OE;;4qJBYu*^#;c'T&WO3i3(=9PdoR^&%V,I1k_12-T-@?li?Nf5Lm:/-Yc2gYa&n-&@aQ(]`fa1'ZB*EQccr/U[07cGHH<Blkk/sW_F-(Y"Q4bA1b5(2A-8dSK+d<YI')GYqd5Y;)7qp$g:at\8O6I)eQ_bc4-YJcL)MZ6Ar->!Qm*.l9iN%\/<-PL;.,9h%f0DjR6!f#`?%=P_m05_hQ@Cf@d.=^<I0[-+leu`ohAD<V:/9Pp"D_.-6hVU-_=@*:VL;"N]boV]Ih,aOMH[d55j=q9Q=3m7b94B<4)_No1hfLth0G6`K5!kurf&)<+/WE<p-s`F:O!CM@XXUl,eI>ciMo8Vp4h?%qX^4LaWg%<'&['_-AAd001G[Q:DpdF1T$fmChbL`oqWE4_B%]si\Wbo=GICA="HuPLHs$39s;k$`jQNl*\o.>j+F1C"ekti+$o=KRB9\sT0@b"b*MGb\*<hgA3-2d#,^*"ik0S!5us/>@JV_.)tqf263mMlX(l5M~>endstream
 endobj
 xref
-0 6
+0 9
 0000000000 65535 f 
-0000000009 00000 n 
-0000000058 00000 n 
-0000000115 00000 n 
-0000000210 00000 n 
-0000000336 00000 n 
-trailer << /Size 6 /Root 1 0 R >>
+0000000061 00000 n 
+0000000102 00000 n 
+0000000209 00000 n 
+0000000321 00000 n 
+0000000524 00000 n 
+0000000592 00000 n 
+0000000896 00000 n 
+0000000955 00000 n 
+trailer
+<<
+/ID 
+[<3711184fb6cf9d836dfdc972e36ec1ce><3711184fb6cf9d836dfdc972e36ec1ce>]
+% ReportLab generated PDF document -- digest (opensource)
+
+/Info 6 0 R
+/Root 5 0 R
+/Size 9
+>>
 startxref
-2733
+2303
 %%EOF

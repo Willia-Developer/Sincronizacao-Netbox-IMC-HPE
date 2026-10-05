@@ -1,421 +1,118 @@
 %PDF-1.4
+%“Œ‹ž ReportLab Generated PDF document (opensource)
 1 0 obj
-<< /Type /Catalog /Pages 2 0 R >>
+<<
+/F1 2 0 R /F2 3 0 R /F3 4 0 R
+>>
 endobj
 2 0 obj
-<< /Type /Pages /Kids [4 0 R 6 0 R 8 0 R 10 0 R 12 0 R 14 0 R 16 0 R] /Count 7 >>
+<<
+/BaseFont /Helvetica /Encoding /WinAnsiEncoding /Name /F1 /Subtype /Type1 /Type /Font
+>>
 endobj
 3 0 obj
-<< /Type /Font /Subtype /Type1 /BaseFont /Courier /Encoding /WinAnsiEncoding >>
+<<
+/BaseFont /Helvetica-Bold /Encoding /WinAnsiEncoding /Name /F2 /Subtype /Type1 /Type /Font
+>>
 endobj
 4 0 obj
-<< /Type /Page /Parent 2 0 R /MediaBox [0 0 612 792] /Resources << /Font << /F1 3 0 R >> >> /Contents 5 0 R >>
+<<
+/BaseFont /Courier /Encoding /WinAnsiEncoding /Name /F3 /Subtype /Type1 /Type /Font
+>>
 endobj
 5 0 obj
-<< /Length 2562 >>
-stream
-BT /F1 10 Tf 48 750 Td 14 TL
-(# HPE iMC -> NetBox - laboratório e produção por etapas) Tj T*
-() Tj T*
-(## Estado de entrega: preparação offline) Tj T*
-() Tj T*
-(O projeto está preparado para início futuro. Não há APIs do iMC ou do NetBox) Tj T*
-(disponíveis nesta fase e elas não são necessárias para validar o código localmente. As) Tj T*
-(etapas operacionais abaixo serão executadas quando o ambiente estiver disponível.) Tj T*
-() Tj T*
-(Para conferir a entrega agora, sem configurar credenciais nem acessar serviços:) Tj T*
-() Tj T*
-(.venv/bin/python scripts/validate.py) Tj T*
-() Tj T*
-(O verificador usa respostas simuladas, não conecta usando imc/.env e grava o resultado) Tj T*
-(em artifacts/validation.json. Em uma máquina nova, instale Python e as dependências) Tj T*
-(conforme a seção 1; a validação completa também usa Git, Bash e pdftotext do pacote) Tj T*
-(poppler-utils.) Tj T*
-() Tj T*
-(Consulte o guia de início do projeto \(docs/INICIO_DO_PROJETO.md\) e o relatório de) Tj T*
-(validação atual \(docs/VALIDACAO_ETAPAS.md\). A entrega já está incorporada à pasta) Tj T*
-(principal e não depende da cópia temporária da sessão anterior.) Tj T*
-() Tj T*
-(A integração lê o inventário do iMC, compara com o NetBox e altera somente descrição e) Tj T*
-(VLANs das interfaces que já existem no NetBox. O laboratório usa um switch escolhido) Tj T*
-(pelo operador. Em produção, todos os dispositivos do iMC são consultados e comparados.) Tj T*
-() Tj T*
-(Um dispositivo que existe no iMC e não existe no NetBox é descartado, registrado pelo) Tj T*
-(nome nos logs e contado em devices_not_found. Isso é esperado e não gera erro de) Tj T*
-(execução. As interfaces desse dispositivo não são consultadas. Nenhum dispositivo é) Tj T*
-(criado ou alterado.) Tj T*
-() Tj T*
-(Este é o README oficial de operação. Execute cada etapa separadamente e confira o) Tj T*
-(resultado antes de avançar. Não há requisito de cadastrar uma lista fixa de switches) Tj T*
-(para produção.) Tj T*
-() Tj T*
-(## 1. Preparar Python e dependências) Tj T*
-() Tj T*
-(No Linux Ubuntu/Debian:) Tj T*
-() Tj T*
-(python3 --version) Tj T*
-(# Se necessário:) Tj T*
-(sudo apt update) Tj T*
-(sudo apt install python3 python3-venv python3-pip util-linux) Tj T*
-() Tj T*
-(Entre na raiz desta cópia do projeto \(ajuste o caminho se necessário\):) Tj T*
-() Tj T*
-(cd /home/willia/Downloads/Sincronizacao-Netbox-IMC-HPE-main) Tj T*
-(python3 -m venv .venv) Tj T*
-(source .venv/bin/activate) Tj T*
-(python -m pip install -r requirements.txt) Tj T*
-ET BT /F1 9 Tf 48 32 Td (Piloto iMC - NetBox | 1/7) Tj ET
-endstream
+<<
+/Contents 11 0 R /MediaBox [ 0 0 595.2756 841.8898 ] /Parent 10 0 R /Resources <<
+/Font 1 0 R /ProcSet [ /PDF /Text /ImageB /ImageC /ImageI ]
+>> /Rotate 0 /Trans <<
+
+>> 
+  /Type /Page
+>>
 endobj
 6 0 obj
-<< /Type /Page /Parent 2 0 R /MediaBox [0 0 612 792] /Resources << /Font << /F1 3 0 R >> >> /Contents 7 0 R >>
+<<
+/Contents 12 0 R /MediaBox [ 0 0 595.2756 841.8898 ] /Parent 10 0 R /Resources <<
+/Font 1 0 R /ProcSet [ /PDF /Text /ImageB /ImageC /ImageI ]
+>> /Rotate 0 /Trans <<
+
+>> 
+  /Type /Page
+>>
 endobj
 7 0 obj
-<< /Length 2838 >>
-stream
-BT /F1 10 Tf 48 750 Td 14 TL
-(python -m pip check) Tj T*
-() Tj T*
-(Python 3.10 ou superior. requests é usado pelas APIs; pytest pelos testes offline. Não) Tj T*
-(reutilize um ambiente virtual copiado de outra máquina. Para uma sessão nova, basta) Tj T*
-(entrar na raiz e executar source .venv/bin/activate. Para sair: deactivate.) Tj T*
-() Tj T*
-(## 2. Configurar o ambiente local) Tj T*
-() Tj T*
-(# Só copia se .env ainda não existir; preserva credenciais já preenchidas.) Tj T*
-(test -f imc/.env || cp imc/.env.example imc/.env) Tj T*
-(chmod 600 imc/.env) Tj T*
-(nano imc/.env) Tj T*
-() Tj T*
-(Cada script carrega imc/.env automaticamente como dados. Não execute source imc/.env.) Tj T*
-(Valores com espaços precisam de aspas. Variáveis exportadas no terminal prevalecem) Tj T*
-(sobre o arquivo; IMC_ENV_FILE permite escolher outro arquivo local.) Tj T*
-() Tj T*
-(| Variável | Uso |) Tj T*
-(| --- | --- |) Tj T*
-(| IMC_HOST | Hostname ou IPv4, sem protocolo ou porta |) Tj T*
-(| IMC_PORT | Porta real do iMC; padrão 8443 com HTTPS |) Tj T*
-(| IMC_USE_HTTPS | true para HTTPS; false para HTTP explicitamente configurado |) Tj T*
-(| IMC_USERNAME / IMC_PASSWORD | Conta de serviço para leitura |) Tj T*
-(| IMC_VERIFY_SSL | true; em HTTPS utilize a CA correta |) Tj T*
-(| IMC_CA_BUNDLE | Opcional: caminho da CA interna |) Tj T*
-(| NETBOX_URL | Origem do NetBox, sem /api |) Tj T*
-(| NETBOX_TOKEN | Token de leitura; alteração de interfaces somente na aplicação |) Tj T*
-(| NETBOX_VERIFY_SSL / NETBOX_CA_BUNDLE | Validação TLS e CA interna |) Tj T*
-(| NETBOX_VLAN_GROUP_ID | Opcional: ID de um grupo de VLAN explicitamente escolhido |) Tj T*
-(| REQUEST_TIMEOUT | Timeout por requisição, de 1 a 300 segundos; padrão 30 |) Tj T*
-() Tj T*
-(As primeiras três etapas precisam somente das variáveis do iMC. O teste do NetBox) Tj T*
-(precisa somente das variáveis do NetBox. Comparação, simulação e aplicação precisam) Tj T*
-(dos dois serviços. Não é necessário ter configurado o NetBox para começar a descoberta) Tj T*
-(do iMC.) Tj T*
-() Tj T*
-(## 3. Scripts para cada etapa) Tj T*
-() Tj T*
-(Todos os comandos abaixo são executados na raiz do projeto, com o ambiente virtual) Tj T*
-(ativo. SW-LAB-01 é um exemplo: substitua pelo nome exato obtido na listagem.) Tj T*
-() Tj T*
-(| Etapa | Script | Efeito |) Tj T*
-(| --- | --- | --- |) Tj T*
-(| 1. Conexão iMC | testar_conexao_imc.py \(imc/testar_conexao_imc.py\) | Um GET) Tj T*
-(autenticado, sem inventário completo |) Tj T*
-(| 2. Descoberta | listar_dispositivos_imc.py \(imc/listar_dispositivos_imc.py\) | Lista) Tj T*
-(IDs e nomes de todos os devices, somente GET |) Tj T*
-(| 3. Inspeção de um switch | inspecionar_switch_imc.py \(imc/inspecionar_switch_imc.py\)) Tj T*
-(| Lê interfaces, descrições e VLANs do switch escolhido |) Tj T*
-ET BT /F1 9 Tf 48 32 Td (Piloto iMC - NetBox | 2/7) Tj ET
-endstream
+<<
+/Contents 13 0 R /MediaBox [ 0 0 595.2756 841.8898 ] /Parent 10 0 R /Resources <<
+/Font 1 0 R /ProcSet [ /PDF /Text /ImageB /ImageC /ImageI ]
+>> /Rotate 0 /Trans <<
+
+>> 
+  /Type /Page
+>>
 endobj
 8 0 obj
-<< /Type /Page /Parent 2 0 R /MediaBox [0 0 612 792] /Resources << /Font << /F1 3 0 R >> >> /Contents 9 0 R >>
+<<
+/PageMode /UseNone /Pages 10 0 R /Type /Catalog
+>>
 endobj
 9 0 obj
-<< /Length 2314 >>
-stream
-BT /F1 10 Tf 48 750 Td 14 TL
-(| 4. Conexão NetBox | testar_conexao_netbox.py \(imc/testar_conexao_netbox.py\) | Testa) Tj T*
-(GET em dispositivos, interfaces e VLANs |) Tj T*
-(| 5. Comparação de inventários | comparar_dispositivos.py) Tj T*
-(\(imc/comparar_dispositivos.py\) | Compara nomes e registra encontrados/ausentes, sem) Tj T*
-(ler interfaces |) Tj T*
-(| 6. Simulação do laboratório | simular_switch.py \(imc/simular_switch.py\) | Planeja) Tj T*
-(diferenças de um switch; zero PATCH |) Tj T*
-(| 7. Aplicação do laboratório | aplicar_switch.py \(imc/aplicar_switch.py\) | Recalcula) Tj T*
-(o plano, pede SIM e aplica diferenças do switch |) Tj T*
-(| 8. Produção | sincronizar_producao.py \(imc/sincronizar_producao.py\) | Compara todos;) Tj T*
-(dry-run padrão, aplicação explícita |) Tj T*
-() Tj T*
-(### Etapa 1 - conexão com o iMC) Tj T*
-() Tj T*
-(python imc/testar_conexao_imc.py) Tj T*
-() Tj T*
-(### Etapa 2 - listar os dispositivos) Tj T*
-() Tj T*
-(python imc/listar_dispositivos_imc.py) Tj T*
-() Tj T*
-(Confira o nome do switch que será usado no laboratório. Essa etapa não seleciona nem) Tj T*
-(aplica alterações automaticamente.) Tj T*
-() Tj T*
-(### Etapa 3 - ler o switch selecionado) Tj T*
-() Tj T*
-(python imc/inspecionar_switch_imc.py --device "SW-LAB-01") Tj T*
-() Tj T*
-(O inventário é lido para resolver o nome, mas somente as interfaces desse switch são) Tj T*
-(consultadas. Nome ausente ou duplicado impede a inspeção. Confira descrição, ifIndex,) Tj T*
-(modo, PVID e VLANs com a configuração real do switch. Resultado inconclusivo fica) Tj T*
-(registrado.) Tj T*
-() Tj T*
-(### Etapa 4 - testar acesso ao NetBox) Tj T*
-() Tj T*
-(python imc/testar_conexao_netbox.py) Tj T*
-() Tj T*
-(Confirma leitura dos três tipos de objeto. Um GET bem-sucedido não comprova permissão) Tj T*
-(de PATCH.) Tj T*
-() Tj T*
-(### Etapa 5 - comparar os inventários) Tj T*
-() Tj T*
-(python imc/comparar_dispositivos.py) Tj T*
-() Tj T*
-(Mostra correspondências, dispositivos ausentes e ambiguidades. O nome precisa) Tj T*
-(coincidir exatamente. Não há fallback por IP, abreviação ou posição na lista. Ausência) Tj T*
-(é descarte normal; ambiguidade ou erro de comunicação exige revisão.) Tj T*
-() Tj T*
-(### Etapa 6 - simular somente um switch) Tj T*
-() Tj T*
-ET BT /F1 9 Tf 48 32 Td (Piloto iMC - NetBox | 3/7) Tj ET
-endstream
+<<
+/Author (Projeto WhatsUp Gold - NetBox) /CreationDate (D:20261006000142+09'00') /Creator (\(unspecified\)) /Keywords () /ModDate (D:20261006000142+09'00') /Producer (ReportLab PDF Library - \(opensource\)) 
+  /Subject (\(unspecified\)) /Title (README) /Trapped /False
+>>
 endobj
 10 0 obj
-<< /Type /Page /Parent 2 0 R /MediaBox [0 0 612 792] /Resources << /Font << /F1 3 0 R >> >> /Contents 11 0 R >>
+<<
+/Count 3 /Kids [ 5 0 R 6 0 R 7 0 R ] /Type /Pages
+>>
 endobj
 11 0 obj
-<< /Length 2612 >>
+<<
+/Filter [ /ASCII85Decode /FlateDecode ] /Length 2477
+>>
 stream
-BT /F1 10 Tf 48 750 Td 14 TL
-(python imc/simular_switch.py --device "SW-LAB-01") Tj T*
-() Tj T*
-(Revise os campos anteriores e propostos. O script filtra o switch antes de consultar) Tj T*
-(suas interfaces ou procurar os demais devices no NetBox. O resultado dessa etapa é uma) Tj T*
-(proposta nos logs, não um arquivo executável de mudanças.) Tj T*
-() Tj T*
-(### Etapa 7 - aplicação controlada) Tj T*
-() Tj T*
-(python imc/aplicar_switch.py --device "SW-LAB-01") Tj T*
-() Tj T*
-(Use depois de validar o dry-run. A aplicação relê os dados, mostra um plano novo e) Tj T*
-(solicita SIM em um terminal interativo. Confira novamente: o plano pode ter mudado) Tj T*
-(desde a simulação. Não aceita aplicação em todos os switches nem confirmação não) Tj T*
-(interativa por essa entrada de laboratório.) Tj T*
-() Tj T*
-(### Etapa 8 - produção, após aprovação e validação) Tj T*
-() Tj T*
-(Simular todo o inventário:) Tj T*
-() Tj T*
-(python imc/sincronizar_producao.py --dry-run) Tj T*
-() Tj T*
-(Aplicar com confirmação:) Tj T*
-() Tj T*
-(python imc/sincronizar_producao.py --apply) Tj T*
-() Tj T*
-(Aplicar sem prompt, quando a operação não interativa já fizer parte do procedimento) Tj T*
-(aprovado:) Tj T*
-() Tj T*
-(python imc/sincronizar_producao.py --apply --non-interactive) Tj T*
-() Tj T*
-(O script lê todos os dispositivos do iMC, procura nomes únicos no NetBox e processa) Tj T*
-(somente os correspondentes. Devices ausentes são documentados e descartados. Ele não) Tj T*
-(cria inventário nem modifica objetos de dispositivo: o PATCH atinge exclusivamente) Tj T*
-(interfaces existentes.) Tj T*
-() Tj T*
-(## 4. Regras das VLANs e descrições) Tj T*
-() Tj T*
-(- Campos permitidos: description, mode, untagged_vlan e tagged_vlans.) Tj T*
-(- Nenhum POST, PUT ou DELETE. Sem alteração de enabled, status, IP, MAC ou tipo.) Tj T*
-(- Interface ausente, VLAN ausente ou correspondência ambígua bloqueia aquela interface) Tj T*
-(e aparece no resumo.) Tj T*
-(- NETBOX_VLAN_GROUP_ID restringe a busca a um grupo explicitamente escolhido e valida) Tj T*
-(o grupo no retorno. Sem ele, o VID precisa ser único em todo o NetBox. O script não) Tj T*
-(escolhe um site/grupo automaticamente.) Tj T*
-(- Access exige correspondência pelo ifIndex, uma única VLAN e PVID igual a essa VLAN.) Tj T*
-(Falha nos endpoints trunk/hybrid é registrada e não bloqueia access confirmado pelos) Tj T*
-(seus próprios dados; conflitos encontrados nas respostas disponíveis continuam) Tj T*
-(bloqueados.) Tj T*
-(- Trunk exige classificação completa e PVID presente na associação; o código) Tj T*
-ET BT /F1 9 Tf 48 32 Td (Piloto iMC - NetBox | 4/7) Tj ET
-endstream
+Gatm<rD2HE')eB9U9r??llC**36m;@:<G97/122m#W"LJ$$GT0d^-C:dqraV1k5G:C-.8D6KUN`5%;Rg?.DrY?G3dC*W5^#J!:RoQr*[D:O\WW1\,m!O!^384ur0<_d;9qa;]:-^!OftqmcTPPYnVW4eGUZ_nbRJ_EQj'FE^]f2<:T'?@T@\d.P<ULqI%A(j3Ic*-Qrg+>`0eIdIZslsaEra'TXWYkL/+ek&Q;J'sT553OBj6"^]o5D[ipdo%G@(9o2LRjBPJVmOgM:@qdR"MFj8!_p5L@[Ru%=.4N3aktd8L:ONIjIPsF7fC?2mmh/kL,A*)]]!fd7'Q0RYsO44T':GdY;>MUEBf;ZlSdSuK['93"g9`IpnL#u?/Har6UE?@h?[?ChPN)Y]\;_pRF]R3iS2-;o?ok<hsdi0*k[GJLB?Y<968.M3Fje(0+a\bBnWS3<32%;Pg2Z`Yp>Sd&OJVPNRAkRdgN&q!WYR69Of*#FCr^l&@"2@9f=aV0CWPA$R82H:74#gdQ/JjU*u/DrsH%mj[?p-:YWB(8Q`#<<I<@/0ca#;\K"sVc5"dO7)Y!I.9l9[Q82adOPR%4PEf8r87kL@2V&PcDQYP_MqrXf5jSWe5AUQ&eKjU7$U_fB>S;cD$0Sa)+NNhU@H:Z5Zl=\e:%kH/<151t,L1JoVO!;p63K<)F]j!3<FoW>>o8h59B2KLlT@p`Uf;</F/2,'1WY2Gdh:"5A%`@1Su/Lha\9rP,7KEl';cu$bVpb3:SfMY$)N6[Xe(%aKI4u%o$(mp2',tjYmH?aaF6`[,I5B6L.%Ui='b]R[Dc)kMBPTdW52^*IcEei,E])%m0;6aVBY+5C1IOM_YZ)'FFSX/#ft!RB*Y[S%YN@=Ue4XPTM<:(Br0k[^*r(]5q"=T\@K>C!;]Pj>.#&E%3ZM4RJ*PO?LG<TEn+Lmm6^grZhiY'f't1<e/7GL$V9P@Au2o9N+CHBr6PYU]!m'3^b/b`FH##5GJsuV^>=?OcVs[f54Rk!IW@b6j2otm-hQs,npGHfHe"]c6olfWeI7#:bngT>@^V]S7"6j9cj>&Z"H\oNLp2gQGrRlon5iW\)5+eH&a#b&T_m1NhI"+n(?'Nk(-85+o/m!10O:]["Oi>BI.0\T8;Mo$Z8rT#:e@J3$H#MJR!;D.W<ILk;)^?M)p1UFlPNf>Q7CJJ?j(h/c?_j-].n?'9e)#e`]%<)=#S\MGkE*[EgPFSml$TG%0k<S$-?M:a8a`sE-L]Kb1bB**gWk>hL.^B"5nP[dDNI4XB.M!la]]+e3ZgjAUjWN.!M#LHkK,/mUg*N79JqAbIRAl_Ho+'nSLG$HFbt[]iqd6F\Ma/V_\7o0GiN2U%Q=t;TF(,I*;2X'ro+n-qi>UH?2cbjuE0i;T%.(g/uCj_%tfN!/lP)^l`7eR7h-Y9>=1J2g5PB;"fPd,9aeJ\lH)sT8fnKSI,.!MN#0(N%2,!8Y_>o=c%eZa7<K^kiW+n%ost>2W/@E8YI$!k5Y&+gDP/.T<#<=o;aO*T.VbB[tZt/X\:2V7(Oq.?A4G3DH0.29-P4+D_;>%]iRg8+6\7rMA@uDUP5b$jhW/TFQHOSQO:S.l/6=09GZ*:%c)hNd-\JIM2Z5-[`BhSOscN0mLgrnK!D)]U):Sj!4d32:%.QK>Y0`'&&fhC^MldPqII:aLZ;K,[XE=I27X`'Xrm3#&ZrrDj+guE\,cL^VcR\:ob]t,b$&`EAd6=*5#*M>!PpBH3`2Y@V)hQ=PZ=8jlWFf%`[m3>JUW"Y6/@\'Ad%)^p-o192KKaek\>(`06^c-QfAUYNrR9uEFPQHB^\XodQG!4H%=SZ63"XBFpirdKTMte#peBKK[j<li)KX?meU[j#',?h@'je>ncQps(:?+YgB-qVV1)(G<pO#Aao\e9/iOO,\.:cSVSITfZ/\8!2Nbsq+&7!6k!mC&<'2e0YtFK+[bV8U[3)<mD](-a*Ko=A<J6n,>jfULgsFYM,0[K[?Ib;mVm]DjWCXP!PplU8b8l0k@OeB6kM_m!LMs>Pi2n;F#h:-FPNUOPmJ#KioWM?ga1>=t;4.\<EQSrW!Im+>^_Us=L1ZPU/E=#FS:ILEc+&DY_a1-O`SK@hn%5!ggOFqNNNS&`7o]"YFe1#1QN[TB3(#H@-H[@nEY4dqiq+C7)@(=[FsSinYW*ri)Ma7g4VkDn/TB]O>Bba'<;c$WoPX8<[8QPE6?Qj\XFIV[hWeK8:_e$4,1K!qR.R;IgCO:hj1m7]>N$X$JFX](E6.Ig]jr&R&%0l(B4!`;FZePO,O3b=:IKt%.\(gd.\,:@nWK\3/Cj2g>lR69pcs`CJK8%ZD7!Oq_\-jqL`Po*mYXtHO$8j^U9TM5Jth9FW/b<oB07L@pJPXn:_+nG;GMuLZ!UP=k^*)"ZD4/$ot-lcH`@TAMg#Wk44N65bJPj_\l3_Dd_^&GT+_G=aG3diE_2\=S#*4rd*_jnZ`4K[~>endstream
 endobj
 12 0 obj
-<< /Type /Page /Parent 2 0 R /MediaBox [0 0 612 792] /Resources << /Font << /F1 3 0 R >> >> /Contents 13 0 R >>
+<<
+/Filter [ /ASCII85Decode /FlateDecode ] /Length 2484
+>>
+stream
+Gau0DCN%tI')h6*0jb9dKgkO27so4U`Go,bWU2$)HZ<IZ=HP+Z?#l:b>q1$F++IphPXJ_1m0^BX'%5?OH03>=RBm79a.L0GT,%EFB/"QP5S1eK#smps0`(i_ZQjBFNh[^$D]Fes,f$ImHosWV&;Lf%:dC13?8tQ3oNMftNgdZ$[+3)6DK^oS+;mqiMu@<%L3O_o;%eFdd/u[e#PSYs_#eq4gbNY/QZ0+u%/N3+-+@gC4o>be2pj>%`(Ik7jW\3&!ju:q6Lkf"<JATGMVU\j#ld=#8hMnP/cQDpG;/oNOL/>\`++[@\9Vf@>5%&k$Yg*F@H<EgP;/5S+1-4\+nY$H^@1l+2"Ca9I>&f;TH0^iZ/E59]n0Q4:0CFDK=H"HXN6WO"7E"<pJJ9.QZ84(;-KZ(o?h0FhXTI^6=p)V<L'q-[GokeS[2C6g0/<aY4ge;A[XA7^a34G4?J:UlXT^4H3tXn.+O&>T;^tq3Y/+%YhX8Y.5P:gl/2!n1#(ZkS*_h[h`:CR$=K,B!??`nnf1U46E]jBJ@#D;&ZWCkgi0r=)=q7Umk$!S0B"Sq,KN;N1/NL(YsKr8;DFSVK5?[inm$U6[ur[GF3aEmXfh@QjM<.90tb;gDZOsC1)s(nUhh7S(-B/&e3"m'^OMVW)H_l]'bgq[K#0AfWC$5TjN*3L"j9((c,BpsCa!h-C"4q7Po3hi.[fFa&Sk9`"1eKfLDclVnXB,Z_Tg1LP[7?DaI_I'QN/?Xra2CUOUM[I/1g)$-l&:X,iR]eS8!uPnV*sb\Rbk/%>#K)#>@#$3(?m08<q2rkK7fU/iJjD_7>?#NnYh,WHc/Qo=!KI=NNBqED'g\f2dUj%P70X$nQZNY,eZmSZ4P;Jl2NGI=mfQnPTZ]Y2FUe48f>J/dea2$Vc2<>-1fIn1cQIK$)*5K$n0ug5S+\7#*."lBpEW6QfXX&*BQ/+*0_ZL_<(2#[(gF9:"IEX\N.XfkCra#VW&T/qkpJ^8]@48I7B0"Np1eg!,/@e_&nc!)O&*OUfBoV7<MCjCsnB$^Uef:KVm!0g'sF#Ep<U@1\BP$/dX6ilQ8@%3^NI94Q#j[8pG\63qC];iMLt<HUWaOtD>/Xu0Q9,f<fW>r0`s8JKJL#"/S=\j[<a6fG.E(k[O(KCZk8.LH%T^/ca<%l/if+1klEj(grFp%t/+kj(iY=oLo%Za.ds*X26cXEa(r2]\Wg4WU9ql-Pbhp0D]AMEPp^0/l%D=ih?s3.j:4S6-/G"0rBAp%SiZft-T^S!cT=;[ZRd<i_J'>,iOVdV=!>9.k.`!`G"/\O%([=I.E2''l%;$=0A)Y>FM<CY!AD2C3gue!<mLU/?_`SK1XO>J?h\:b%HIQ2X@9YB5KClAs9SfU]J>Drs@*QY<@sl;UpJ/`^#?VTNU,S2;2[FoQ%]/>X)9DA@FPR^39bimcUVecMgFOu:Pt<p\9n[_'Z%M>t7=k\Mh+I!^ZPA^h.;NJDVXSB=&f1=cUURS42+*@BDI8qG72_qR>n&J:8Bi^riKda0IILR967$7@Q?*4q>M2_6AE_-p@<"#lZ*%P\;jltf]q]/UXp<L=FUE1ck'<F;t:k9?tqJ$(H]S_<b1/]>-BgsS`m21pq9U^.jAO8)18-!L\t>-XcF='-Ya4<YEO4l.WL4lhK3'K1qEdTWd-D-'1;=pJCRP>l8oQqRtgK&Xec6*-l&:(tJ*$I4@m'H86C?%2N"kF&UC4]DKbM1kBlXaQ%d>4V#k#EGB5'66l#q[8m-pR45]<;3S!=NP3"p#'mW_Sf2d>16[A*,uMPjX[+"=hNa3@&""KDDe?)g9bDO>#LKn:J+>=HS5`=-+?JEb:/kY9F]#7^p`a(-A3qe:1T>'^eROT]dg"e9([anoN];t(/1)8m*tql:HN]90C(MaVZIuEbs:Xk:<QT!ah+hR00?K&YQ\qb'<EM?!IJ;(W!UkfH<]CL[3]l_WYTfs+s+*h-<&,bh3V@]\fmFih2+<8#7%"7hph@<<U"\9_)%US,@Kp6@?mks_ff%[S1(ja6o+_;_?N?BYu&fl$h]LA\iW#tgV5G&%lM=ud4H244;k_TDA-+uS9-j0VReoWR<n^E,[F&*ZhU[kcd-4-i'lO&.F2\qbO%d[oND+rKP?J.g!1,?dt'<g90='Qoson;QpGo<-C7A7c+N+f_]\qbo6WsH8%ZX*?=0)&[g(mOs4R%1U22qp%Xg*YaGf9"N$/l#fmEV/n#a>E0SB56.m.%%*DSPLLPLb#$HBIe9A_?M\m',mB-"'N96-`4rd/X'.iQ<b%ZI>64&lD!Fe]gZd.i]n?Zda<p31U"SCY]!-`&lDQ6#@(.Q)k9V]RPJ9i%Zg?BO(AfI<L:(k++E]i/W63SNHVHL\p2pX/Jl*ct9VosR57@fC:lVcUW>bqC\6c))S[+6R;.fbrXqFG+ab0btc>$e'b(a6Idb:@VRS5X&IYSpn>`]_F-+A<'02q;p;rmF?^#"U0qc#9n+2QN~>endstream
 endobj
 13 0 obj
-<< /Length 3015 >>
+<<
+/Filter [ /ASCII85Decode /FlateDecode ] /Length 874
+>>
 stream
-BT /F1 10 Tf 48 750 Td 14 TL
-(representa PVID como nativa e demais VLANs como tagged. Essa interpretação ainda) Tj T*
-(precisa ser validada com respostas reais do iMC instalado.) Tj T*
-(- Hybrid e consultas vazias/inconclusivas continuam bloqueados. O código não limpa) Tj T*
-(associações por falha de consulta.) Tj T*
-(- Uma lista tagged pode ser limpa quando uma configuração access válida confirma a) Tj T*
-(transição.) Tj T*
-(- Descrição vazia ou null explicitamente recebida pode limpar a descrição atual. Campo) Tj T*
-(ausente ou inválido preserva a descrição. Se a VLAN estiver inconclusiva, a interface) Tj T*
-(inteira é preservada, inclusive a descrição.) Tj T*
-() Tj T*
-(## 5. Confirmação da escrita e logs) Tj T*
-() Tj T*
-(Antes de cada PATCH, o NetBox é relido para detectar mudanças desde o planejamento.) Tj T*
-(Depois do PATCH, um novo GET confere ID e campos propostos. Somente o estado) Tj T*
-(confirmado aumenta applied.) Tj T*
-() Tj T*
-(Timeout ou perda de conexão durante PATCH é resultado incerto. O script faz GET de) Tj T*
-(reconciliação e não repete o PATCH automaticamente. Se os campos estiverem corretos,) Tj T*
-(confirma o resultado; se não for possível confirmar, registra erro e unconfirmed. A) Tj T*
-(checagem anterior reduz conflitos, mas GET/PATCH não são uma transação atômica.) Tj T*
-() Tj T*
-(Logs: logs/pilot.log, com UUID da execução, horário UTC, modo, escopo, grupo VLAN,) Tj T*
-(nomes consultados, propostas e resultados. Rotação de 5 MB com cinco backups;) Tj T*
-(diretório restrito e mascaramento de credenciais. Os logs contêm inventário e) Tj T*
-(descrições: mantenha-os no ambiente autorizado.) Tj T*
-() Tj T*
-(tail -n 100 logs/pilot.log) Tj T*
-(# Para acompanhar:) Tj T*
-(tail -f logs/pilot.log) Tj T*
-() Tj T*
-(| Contador | Significado |) Tj T*
-(| --- | --- |) Tj T*
-(| devices / devices_found | Dispositivos retornados pelo IMC / correspondentes no) Tj T*
-(NetBox |) Tj T*
-(| devices_filtered | Fora do switch selecionado, no laboratório |) Tj T*
-(| devices_not_found | Ausentes no NetBox, descartados sem erro |) Tj T*
-(| devices_skipped / interfaces_skipped | Descartes separados por tipo |) Tj T*
-(| interfaces / interfaces_found / interfaces_not_found | Interfaces lidas,) Tj T*
-(correspondentes e ausentes |) Tj T*
-(| vlans_not_found | Interfaces bloqueadas por VLAN não encontrada |) Tj T*
-(| ambiguities | Ocorrências de correspondência ambígua |) Tj T*
-(| synchronized / divergent | Interfaces iguais / com diferenças válidas |) Tj T*
-(| planned / interfaces_simulated | Propostas válidas / propostas em dry-run |) Tj T*
-(| accepted / applied | PATCHes aceitos por HTTP / alterações confirmadas por GET |) Tj T*
-(| uncertain / unconfirmed | Envios com resultado incerto / tentativas não confirmadas) Tj T*
-(|) Tj T*
-(| errors / duration_seconds | Erros de processamento / duração do fluxo |) Tj T*
-() Tj T*
-(skipped é mantido por compatibilidade como total de descartes. As categorias podem se) Tj T*
-ET BT /F1 9 Tf 48 32 Td (Piloto iMC - NetBox | 5/7) Tj ET
-endstream
-endobj
-14 0 obj
-<< /Type /Page /Parent 2 0 R /MediaBox [0 0 612 792] /Resources << /Font << /F1 3 0 R >> >> /Contents 15 0 R >>
-endobj
-15 0 obj
-<< /Length 2692 >>
-stream
-BT /F1 10 Tf 48 750 Td 14 TL
-(sobrepor: um timeout pode ser reconciliado e depois confirmado.) Tj T*
-() Tj T*
-(Código de saída: 0 sem erros \(pode incluir dispositivos ausentes descartados ou) Tj T*
-(cancelamento pelo operador\); 1 falhas por objeto/resultado inconclusivo; 2) Tj T*
-(configuração, argumentos, lock ou falha global. Use echo $? imediatamente após o) Tj T*
-(comando. Na inspeção, 1 indica VLANs inconclusivas.) Tj T*
-() Tj T*
-(## 6. Testes offline) Tj T*
-() Tj T*
-(python -m pytest -q) Tj T*
-(python scripts/mock_dry_run.py) Tj T*
-(python -m compileall -q imc scripts tests sincronizacao_imc_netbox.py) Tj T*
-(for script in imc/*.sh; do bash -n "$script"; done) Tj T*
-(git diff --check) Tj T*
-() Tj T*
-(A suíte bloqueia transporte de rede real. Cobre seleção do laboratório, leitura de) Tj T*
-(todos em produção, ausência normal de devices, limites de método/campo, grupo VLAN,) Tj T*
-(falhas de endpoints, confirmação posterior e timeout sem reenvio. Mocks não comprovam) Tj T*
-(conectividade, permissões ou semântica das respostas reais.) Tj T*
-() Tj T*
-(## 7. Núcleo e scripts auxiliares) Tj T*
-() Tj T*
-(Os scripts de etapa compartilham etapas.py \(imc/etapas.py\), sync.py \(imc/sync.py\), os) Tj T*
-(clientes iMC \(imc/imc_client.py\) e NetBox \(imc/netbox_client.py\), policy.py) Tj T*
-(\(imc/policy.py\) e runtime.py \(imc/runtime.py\). Isso mantém as regras iguais em todas) Tj T*
-(as etapas.) Tj T*
-() Tj T*
-(A entrada compatível sincronizacao_imc_netbox.py \(sincronizacao_imc_netbox.py\)) Tj T*
-(permanece. --apply nela exige escopo explícito:) Tj T*
-() Tj T*
-(python sincronizacao_imc_netbox.py --device "SW-LAB-01" --dry-run) Tj T*
-(python sincronizacao_imc_netbox.py --device "SW-LAB-01" --apply) Tj T*
-(python sincronizacao_imc_netbox.py --all-devices --dry-run) Tj T*
-() Tj T*
-(executar_sincronizacao.sh \(imc/executar_sincronizacao.sh\) repassa argumentos e usa) Tj T*
-(flock. Para usar o Python correto fora da sessão interativa:) Tj T*
-() Tj T*
-(IMC_PYTHON_BIN="$PWD/.venv/bin/python" bash imc/executar_sincronizacao.sh --device) Tj T*
-("SW-LAB-01" --dry-run) Tj T*
-() Tj T*
-(instalar_cron.sh \(imc/instalar_cron.sh\) continua desativado até validar a operação.) Tj T*
-(desinstalar_cron.sh \(imc/desinstalar_cron.sh\) remove o agendamento legado do usuário;) Tj T*
-(não faz parte dos testes. Todos os fluxos são execução única.) Tj T*
-() Tj T*
-(Ferramentas em scripts/:) Tj T*
-() Tj T*
-(- mock_dry_run.py: demonstração sem rede.) Tj T*
-(- validate.py: agrega testes e verificações locais em artifacts/.) Tj T*
-(- review_repository.py: revisão estática, links, extração textual dos PDFs e diff) Tj T*
-ET BT /F1 9 Tf 48 32 Td (Piloto iMC - NetBox | 6/7) Tj ET
-endstream
-endobj
-16 0 obj
-<< /Type /Page /Parent 2 0 R /MediaBox [0 0 612 792] /Resources << /Font << /F1 3 0 R >> >> /Contents 17 0 R >>
-endobj
-17 0 obj
-<< /Length 1264 >>
-stream
-BT /F1 10 Tf 48 750 Td 14 TL
-(sanitizado.) Tj T*
-(- audit_security.py: auditoria de arquivos/histórico Git local, sem rotação de) Tj T*
-(credenciais nem alteração de histórico.) Tj T*
-(- render_pdfs.py: gera cópias textuais dos Markdown; não é uma apresentação) Tj T*
-(diagramada.) Tj T*
-() Tj T*
-(O legado imc/legacy/netbox_client.py.disabled permanece inativo. imc/teste-home é um) Tj T*
-(aviso no lugar de um dump antigo. Relatórios históricos em docs/ não comprovam a) Tj T*
-(validação desta versão. O Markdown atual é a referência; os cinco PDFs da raiz são) Tj T*
-(cópias textuais regeneradas na entrega offline.) Tj T*
-() Tj T*
-(## Documentação complementar) Tj T*
-() Tj T*
-(- Contrato técnico \(SINCRONIZACAO_IMC_NETBOX.md\)) Tj T*
-(- Instalação \(COMO_INSTALAR_E_TESTAR.md\)) Tj T*
-(- Mapa de arquivos \(LISTA_DE_ARQUIVOS.md\)) Tj T*
-(- Requisitos de acesso \(Requisitos-Permissoes-Dependencias-Servidor-Linux-IMC-) Tj T*
-(NetBox.md\)) Tj T*
-(- Segurança \(docs/SEGURANCA.md\)) Tj T*
-() Tj T*
-(A rotação das credenciais anteriormente expostas e a validação real do laboratório) Tj T*
-(ainda dependem do ambiente. Os scripts não registram essas ações como concluídas) Tj T*
-(automaticamente.) Tj T*
-ET BT /F1 9 Tf 48 32 Td (Piloto iMC - NetBox | 7/7) Tj ET
-endstream
+Gat=h?#SFN'Sc)P($C`TCET5P<LT0#'P/bIL9U(I.In+8Ag;J6S$&%Mj*.#U%b_:9'En_'54@NQhAd2`Ga[r;?3=H10Xs!VZln1Tknjo+G7^W7A)o_[l%%_s,KDZ]CklQTA)LJIQr&G$g4hJ*4oK:,bMGFKY="9YYDZpqVX'5XE/+)=Z>fFfgU0>3H@rck_3c!UXJ,[`8<d@:0]h$j0#,2lWb_S8IpfRj4hIXb%aSZi'r9d'2k+['kS65NRW!ICf![BOgZHjZ<`#[W"f+@+rM3!pjBTaW-hBArqr"l[hA_[iUCk6(O*s\;/e$KgA+CeQ3^fIV@@K\eT=fX['@)gbMF0ZP=@DY_R_lXCn6?GMnN9Nt1sU&(_g/"0ee\Q"pNR^"\DGmY$%:N-Z;Op/`Oq#<OqMj#;MdA)Ge]-%;&V)F7lCn,lhL?k*8<ImB1^:;+AA,ZFST$ndo@%)-c'M.dlL]Y<gD[[,&!W_2X(cbd52.V6(Hoh8IBAu4I]fb,n.aA<-<hSl@<Q/'$[1C'PB@E[RfD]@2bd#n]nUX+OD0e.P(pCG3uNs#SQc!)Q$W*dfdtl#+^m2k_'LAo$"Knn"OA3A2drJ145"H-NW#mTd>bAm8j"Sgjf-[&c/4#:(&6HX&5-AC0ON#;^"[@3No-R9TkRiR^,+tOTBIB%5$Gpf%pf,NM;Tsa-IM<Khf1>0i<ep#S??$.#8eS4'Z.>%2E[5[9-`IGc[^hSPN3Fq$_)[Eh],BKu+=5@.(t:K)]G5)be$S@UtAIQE[m0Pugd[6%SQ=;X85Q*p,Uto;WilH]sf,W#?re6?c7g28r$'c0L-0O@E/?W0gOp9>lUi6FRt$[B@0lIPTE2H6:.O=&S8\"W<Q2iW~>endstream
 endobj
 xref
-0 18
+0 14
 0000000000 65535 f 
-0000000009 00000 n 
-0000000058 00000 n 
-0000000155 00000 n 
-0000000250 00000 n 
-0000000376 00000 n 
-0000002990 00000 n 
-0000003116 00000 n 
-0000006006 00000 n 
-0000006132 00000 n 
-0000008498 00000 n 
-0000008626 00000 n 
-0000011291 00000 n 
-0000011419 00000 n 
-0000014487 00000 n 
-0000014615 00000 n 
-0000017360 00000 n 
-0000017488 00000 n 
-trailer << /Size 18 /Root 1 0 R >>
+0000000061 00000 n 
+0000000112 00000 n 
+0000000219 00000 n 
+0000000331 00000 n 
+0000000436 00000 n 
+0000000641 00000 n 
+0000000846 00000 n 
+0000001051 00000 n 
+0000001120 00000 n 
+0000001409 00000 n 
+0000001481 00000 n 
+0000004050 00000 n 
+0000006626 00000 n 
+trailer
+<<
+/ID 
+[<0497639005ec46c1eb2655b77c0c352d><0497639005ec46c1eb2655b77c0c352d>]
+% ReportLab generated PDF document -- digest (opensource)
+
+/Info 9 0 R
+/Root 8 0 R
+/Size 14
+>>
 startxref
-18805
+7591
 %%EOF

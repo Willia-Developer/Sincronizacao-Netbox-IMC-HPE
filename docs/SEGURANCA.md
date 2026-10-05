@@ -1,41 +1,31 @@
-# Segurança e limpeza do histórico
+# Segurança e limites operacionais
 
-## Ação crítica
+## Fronteiras de escrita
 
-Rotacione manualmente a senha iMC anteriormente exposta. Remover arquivos e reescrever commits não revoga a credencial. Revisar também as credenciais NetBox usadas no ambiente; nomes de variável e placeholders não comprovam que um token real foi exposto.
+WUG: GET somente nas rotas de leitura definidas; POST somente token com grant_type=password, username e password. Demais métodos/recursos bloqueados no request e no envio de PreparedRequest. Não há logout remoto, rediscovery, poll, manutenção ou escrita de configuração.
 
-Nenhuma credencial foi testada contra sistemas corporativos.
+NetBox: GET em devices/interfaces/VLANs e PATCH individual de interface somente em modo apply. Campos autorizados: description, mode, untagged_vlan, tagged_vlans. Nada de criação, remoção ou PATCH em lote/dispositivo.
 
-## Dados removidos
+## Transporte e credenciais
 
-Foram sanitizados exemplos, documentação, PDFs e o script de conexão. O dump interno foi substituído por um aviso. .env, logs, dumps e evidências históricas detalhadas não devem ser publicados.
+HTTPS obrigatório, validação TLS ativa e CA interna opcional. Redirecionamentos desabilitados. Destino exato e caminhos canônicos verificados. Proxies e .netrc herdados não são utilizados; proxy pode ser configurado explicitamente sem credenciais na URL.
 
-A auditoria percorre os arquivos atuais e todos os commits alcançáveis. Os resultados completos são gravados em `artifacts/`, ignorado pelo Git. Hashes antigos, valores sensíveis e referências que facilitem localizar as versões comprometidas ficam fora da documentação pública.
+.env é lido como dados. Logs usam mascaramento de credenciais e quebras de linha; respostas brutas de erro/token não são registradas. Um token obtido fica somente em memória e é removido no encerramento. Expiração interrompe o processo; não existe refresh automático.
 
-## Limpeza histórica
+## Evidências locais
 
-A limpeza é preparada em uma cópia separada com git-filter-repo. Os caminhos com achados são removidos de todos os commits dessa cópia; depois, os arquivos atuais sanitizados são restaurados em um novo commit. O histórico seguro restante pode ser preservado.
+umask 077 na CLI, logs em diretório restrito, relatórios JSON com modo 600 e substituição atômica. Proteger o diretório do projeto contra outros usuários. Inventário e descrições podem ser sensíveis mesmo sem senhas. Configurações/evidências reais são ignoradas pelo Git. O projeto não envia esses arquivos a serviços externos.
 
-Etapas:
+## Aplicação e recuperação
 
-1. Guardar backup protegido e cópia sanitizada fora do clone de limpeza.
-2. Auditar todos os refs e revisar os caminhos afetados.
-3. Executar git-filter-repo com --sensitive-data-removal e --invert-paths.
-4. Restaurar os arquivos atuais e validar todos os commits resultantes.
-5. Repetir os testes e comparar a árvore candidata com os arquivos revisados.
-6. Publicar usando uma condição explícita sobre o hash remoto esperado, para não sobrescrever trabalho novo.
-7. Verificar o remoto e orientar colaboradores a usar novos clones.
+Dry-run padrão. Escopo explícito, perfil homologado, limite de interfaces, plano persistido e confirmação são exigidos. --non-interactive é opção explícita apenas para apply. Lock impede duas execuções desta cópia; não coordena diferentes servidores/cópias.
 
-O arquivo history-paths.txt é uma lista de partida; a auditoria pode identificar caminhos adicionais. Remover um caminho elimina todas as suas versões na cópia filtrada. Por isso, é indispensável preservar e restaurar a versão sanitizada.
+Releitura antes/depois do PATCH reduz risco, mas não elimina corrida entre GET e PATCH. Em falha o lote para; pode haver alterações anteriores confirmadas. Não existe transação global, rollback automático ou garantia de continuidade em queda de energia. Estado sending/unconfirmed exige reconciliação.
 
-## Limites da limpeza
+## Histórico
 
-Reescrever refs não garante remoção de caches, forks, clones de terceiros ou referências internas de pull requests. A purga desses objetos pode exigir atendimento do GitHub Support. Não foi aberto chamado de suporte automaticamente.
+Entradas IMC estão desativadas. O legado .disabled é referência inerte, não alternativa operacional. Não restaure scripts antigos em produção. Esta migração não reescreve histórico Git nem atesta rotação de qualquer credencial histórica; se houver credenciais previamente expostas, a rotação depende dos responsáveis.
 
-Após a reescrita, não faça merge ou push de branches baseadas no histórico antigo: isso pode reintroduzir os dados. Prefira novo clone.
+## Gate de homologação
 
-Consulte a [orientação oficial do GitHub](https://docs.github.com/en/authentication/keeping-your-account-and-data-secure/removing-sensitive-data-from-a-repository).
-
-## Operação
-
-Use privilégio mínimo, TLS verificado e arquivos locais protegidos. O piloto não cria nem exclui objetos e só altera descrição/VLAN de interfaces existentes. Os testes são offline; conexões ao laboratório precisam de autorização operacional.
+validated=true é uma declaração local, não assinatura criptográfica. O relatório guarda hash do perfil para rastreabilidade. Verifique a versão instalada e a semântica de cada campo antes de ativar; fixtures não comprovam produção.

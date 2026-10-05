@@ -1,65 +1,61 @@
-# Instalação e testes
+# Instalação e operação - WhatsUp Gold -> NetBox
 
-Esta entrega está em preparação offline, sem APIs iMC/NetBox disponíveis. Configuração de credenciais e testes de conexão ficam para o início futuro do laboratório. Veja o [guia de início](docs/INICIO_DO_PROJETO.md).
+## Preparar sem alterar pacotes do sistema
 
-## Ambiente
+Linux e Python 3.10+ com venv e pip disponíveis. Não é necessário `apt update` para executar este projeto. Caso falte um requisito do sistema, solicite sua instalação ao responsável pelo servidor.
 
-Python 3.10 ou superior, Bash e flock (util-linux). Runtime usa requests; pytest é usado na validação. O verificador completo também requer Git e pdftotext (poppler-utils). Dependências têm intervalos controlados em requirements.txt.
+Na raiz do projeto:
 
 ```bash
 python3 -m venv .venv
-source .venv/bin/activate
-python -m pip install -r requirements.txt
+.venv/bin/python -m pip install -r requirements.txt
+test -f .env || cp .env.example .env
+test -f config/wug.json || cp config/wug.example.json config/wug.json
+chmod 600 .env config/wug.json
 ```
 
-Somente quando for configurar os serviços para o laboratório:
+Não copie uma venv de outro servidor. Não execute `source .env`. O carregador lê valores como dados e não executa comandos. A venv pode ser ativada, mas os exemplos usam seu Python por caminho explícito.
+
+## Configurar
+
+Em `.env`: WUG_URL, WUG_TOKEN ou WUG_USERNAME/WUG_PASSWORD, NETBOX_URL e NETBOX_TOKEN. Não inclua `/api` nas URLs. Use HTTPS e, quando necessário, configure WUG_CA_BUNDLE/NETBOX_CA_BUNDLE. Validação TLS não pode ser desativada. HTTPS_PROXY_URL é opcional; proxies herdados e .netrc não são usados.
+
+NETBOX_VLAN_GROUP_ID restringe a resolução de VID a um grupo do NetBox. Sem grupo, o VID deve ser único globalmente. O projeto não escolhe o grupo/site por aproximação.
+
+## Validar por etapas
+
+1. `python -m wug check-wug`: autentica e consulta produto. Não altera inventário.
+2. `python -m wug list-devices`: lê todas as páginas do grupo configurado. Confira IDs e nomes.
+3. `python -m wug check-netbox`: consulta devices, interfaces e VLANs. Não testa PATCH.
+4. Complete o perfil local conforme [CONTRATO_API_WUG](docs/CONTRATO_API_WUG.md).
+5. `python -m wug inspect --device "SW-LAB-01"`: confira nomes, descrição e VLAN com o switch.
+6. `python -m wug sync --device "SW-LAB-01" --dry-run`: examine logs e JSON de alterações.
+7. Registre homologação do perfil. Execute `python -m wug sync --device "SW-LAB-01" --apply` e confira novamente o plano antes de responder SIM.
+8. Verifique o inventário NetBox e repita o dry-run. Não deve propor novamente os campos já confirmados e inalterados na fonte.
+
+Todos os comandos devem usar `.venv/bin/python` quando a venv não estiver ativada. `--profile CAMINHO` permite um perfil alternativo, útil para ambientes distintos.
+
+## Falhas comuns
+
+- Perfil sem endpoint de interface: consulte o Swagger instalado; não reutilize cegamente um endpoint de interface de polling IP.
+- 401/403 WUG: conta/token/permissão incorretos. Um token expirado interrompe a coleta; não há renovação automática nesta versão.
+- Falha TLS: forneça a CA correta. Não use verificação desativada.
+- Interface ausente: confira nome exato ou mapeamento por ID de origem no perfil.
+- VLAN ambígua: confira grupo de VLAN; associações são preservadas.
+- Plano com erros: nenhuma aplicação começa; resolva os erros e gere novo plano.
+- PATCH incerto: confira estado `sending`/`unconfirmed`, origem e NetBox antes de repetir a execução.
+
+## Produção
+
+Comece com grupo restrito e simulação. Use `--all-devices` somente depois de validar cobertura e permissões. `--max-changes` limita quantidade de interfaces, não quantidade de campos. Cada execução é única, sem agendamento automático.
+
+O wrapper `scripts/executar_sincronizacao.sh` aceita os argumentos de sync. Configure SYNC_PYTHON_BIN com caminho da venv. Ele não carrega credenciais como shell.
+
+## Testes offline
 
 ```bash
-test -f imc/.env || cp imc/.env.example imc/.env
-chmod 600 imc/.env
+.venv/bin/python -m pip install -r requirements-dev.txt
+.venv/bin/python scripts/validate.py
 ```
 
-Preencha o arquivo localmente. Exemplos são fictícios e placeholders são rejeitados. Não compartilhe o conteúdo do .env.
-
-Use HTTPS e validação TLS. Configure IMC_CA_BUNDLE e NETBOX_CA_BUNDLE para CA interna. Não é permitido desativar a validação TLS. HTTP só é aceito por configuração explícita e gera aviso. Portas incompatíveis com o protocolo são rejeitadas.
-
-NETBOX_URL deve conter apenas a origem, sem /api. IMC_HOST deve ser hostname ou IPv4 sem protocolo/porta. IMC_PORT padrão HTTPS: 8443. Valores com espaços exigem aspas. Variáveis já presentes no ambiente têm precedência; IMC_ENV_FILE permite escolher outro arquivo. O arquivo não é executado como Bash.
-
-## Validação local sem laboratório
-
-```bash
-source .venv/bin/activate
-python3 scripts/validate.py
-# Auditoria local opcional, separada dos testes funcionais:
-python3 scripts/audit_security.py
-```
-
-A suíte usa apenas mocks. O exemplo mockado bloqueia qualquer tentativa de rede. A auditoria consulta somente arquivos e histórico Git local, apresentando metadados sem valores sensíveis.
-
-`bash -n imc/*.sh` é a verificação solicitada, mas o Bash analisa somente o primeiro arquivo como script; executar também cada arquivo individualmente, como acima.
-
-## Validação manual no laboratório — depende de autorização operacional
-
-Rotacione primeiro a credencial iMC exposta. Configure contas com privilégio mínimo. Confirme endpoints, paginação, nomenclatura e representação de VLANs na versão instalada.
-
-```bash
-source .venv/bin/activate
-python imc/testar_conexao_imc.py
-python imc/listar_dispositivos_imc.py
-python imc/inspecionar_switch_imc.py --device "SW-LAB-01"
-python imc/testar_conexao_netbox.py
-python imc/comparar_dispositivos.py
-python imc/simular_switch.py --device "SW-LAB-01"
-# Depois de revisar a simulação:
-python imc/aplicar_switch.py --device "SW-LAB-01"
-```
-
-Confira o plano antes de responder SIM. Para execução por wrapper:
-
-```bash
-IMC_PYTHON_BIN="$PWD/.venv/bin/python" bash imc/executar_sincronizacao.sh --device "SW-LAB-01" --dry-run
-```
-
-Apenas após validação poderá ser usada a entrada de produção: `python imc/sincronizar_producao.py --dry-run`. Aplicação explícita: `--apply`; sem prompt: `--apply --non-interactive`. O instalador cron permanece desativado. As etapas de conexão, listagem e inspeção do IMC exigem somente configuração do IMC. Consulte o [README oficial](README.md) para escopos, logs e sequência completa.
-
-Consulte [contrato](SINCRONIZACAO_IMC_NETBOX.md) e [segurança](docs/SEGURANCA.md).
+Resultado agregado em artifacts/validation.json. Testes offline não comprovam disponibilidade de campos na versão instalada.

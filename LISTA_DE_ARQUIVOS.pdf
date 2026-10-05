@@ -1,73 +1,74 @@
 %PDF-1.4
+%“Œ‹ž ReportLab Generated PDF document (opensource)
 1 0 obj
-<< /Type /Catalog /Pages 2 0 R >>
+<<
+/F1 2 0 R /F2 3 0 R
+>>
 endobj
 2 0 obj
-<< /Type /Pages /Kids [4 0 R] /Count 1 >>
+<<
+/BaseFont /Helvetica /Encoding /WinAnsiEncoding /Name /F1 /Subtype /Type1 /Type /Font
+>>
 endobj
 3 0 obj
-<< /Type /Font /Subtype /Type1 /BaseFont /Courier /Encoding /WinAnsiEncoding >>
+<<
+/BaseFont /Helvetica-Bold /Encoding /WinAnsiEncoding /Name /F2 /Subtype /Type1 /Type /Font
+>>
 endobj
 4 0 obj
-<< /Type /Page /Parent 2 0 R /MediaBox [0 0 612 792] /Resources << /Font << /F1 3 0 R >> >> /Contents 5 0 R >>
+<<
+/Contents 8 0 R /MediaBox [ 0 0 595.2756 841.8898 ] /Parent 7 0 R /Resources <<
+/Font 1 0 R /ProcSet [ /PDF /Text /ImageB /ImageC /ImageI ]
+>> /Rotate 0 /Trans <<
+
+>> 
+  /Type /Page
+>>
 endobj
 5 0 obj
-<< /Length 2680 >>
+<<
+/PageMode /UseNone /Pages 7 0 R /Type /Catalog
+>>
+endobj
+6 0 obj
+<<
+/Author (Projeto WhatsUp Gold - NetBox) /CreationDate (D:20261006000142+09'00') /Creator (\(unspecified\)) /Keywords () /ModDate (D:20261006000142+09'00') /Producer (ReportLab PDF Library - \(opensource\)) 
+  /Subject (\(unspecified\)) /Title (LISTA_DE_ARQUIVOS) /Trapped /False
+>>
+endobj
+7 0 obj
+<<
+/Count 1 /Kids [ 4 0 R ] /Type /Pages
+>>
+endobj
+8 0 obj
+<<
+/Filter [ /ASCII85Decode /FlateDecode ] /Length 2005
+>>
 stream
-BT /F1 10 Tf 48 750 Td 14 TL
-(# Mapa de arquivos) Tj T*
-() Tj T*
-(| Arquivo | Responsabilidade |) Tj T*
-(| --- | --- |) Tj T*
-(| sincronizacao_imc_netbox.py | Entrada pela raiz |) Tj T*
-(| imc/sincronizacao_imc_netbox.py | CLI e ciclo único |) Tj T*
-(| imc/imc_client.py | GET iMC e parsing conservador |) Tj T*
-(| imc/netbox_client.py | Correspondências exatas e PATCH de interface |) Tj T*
-(| imc/policy.py | Métodos, allowlist e transporte restrito |) Tj T*
-(| imc/sync.py | Comparação, planejamento e aplicação |) Tj T*
-(| imc/runtime.py | Configuração, logs, mascaramento e lock |) Tj T*
-(| imc/legacy/netbox_client.py.disabled | Código antigo inativo |) Tj T*
-(| imc/executar_sincronizacao.sh | Wrapper com flock |) Tj T*
-(| imc/instalar_cron.sh | Agendamento desativado no piloto |) Tj T*
-(| imc/desinstalar_cron.sh | Remoção manual do agendamento legado |) Tj T*
-(| imc/testar_conexao_imc.py | Teste manual GET sem credenciais fixas |) Tj T*
-(| imc/listar_dispositivos_imc.py | Lista IDs e nomes do inventário IMC |) Tj T*
-(| imc/inspecionar_switch_imc.py | Consulta interfaces/VLANs de um switch escolhido |) Tj T*
-(| imc/testar_conexao_netbox.py | Testa leitura dos três objetos necessários no NetBox) Tj T*
-(|) Tj T*
-(| imc/comparar_dispositivos.py | Compara inventários; registra ausentes sem erro |) Tj T*
-(| imc/simular_switch.py | Dry-run de um único switch obrigatório |) Tj T*
-(| imc/aplicar_switch.py | Aplicação do switch com confirmação interativa |) Tj T*
-(| imc/sincronizar_producao.py | Inventário completo, dry-run padrão e aplicação) Tj T*
-(explícita |) Tj T*
-(| imc/etapas.py | Implementação compartilhada das etapas e argumentos |) Tj T*
-(| imc/.env.example | Configuração fictícia |) Tj T*
-(| imc/teste-home | Aviso em substituição ao dump interno |) Tj T*
-(| tests/ | Testes com mocks |) Tj T*
-(| scripts/mock_dry_run.py | Demonstração offline |) Tj T*
-(| scripts/validate.py | Verificações offline consolidadas e artifacts/validation.json) Tj T*
-(|) Tj T*
-(| docs/INICIO_DO_PROJETO.md | Preparação atual e roteiro de execução futura |) Tj T*
-(| docs/VALIDACAO_ETAPAS.md | Evidências da entrega incorporada à pasta principal |) Tj T*
-(| scripts/audit_security.py | Auditoria do histórico sem segredos na saída |) Tj T*
-(| scripts/render_pdfs.py | Geração local dos PDFs derivados dos Markdown |) Tj T*
-(| docs/ | Relatório, auditoria histórica e procedimento de segurança |) Tj T*
-() Tj T*
-(A documentação oficial está em README.md, SINCRONIZACAO_IMC_NETBOX.md e) Tj T*
-(COMO_INSTALAR_E_TESTAR.md. Os PDFs da raiz são derivados; não há apresentação PPTX no) Tj T*
-(repositório auditado.) Tj T*
-ET BT /F1 9 Tf 48 32 Td (Piloto iMC - NetBox | 1/1) Tj ET
-endstream
+Gatm;@8GWK&H0nXR#bJeSCijcE(D>WV7fDV[#eUtVb5OkhLq`62r.c;:u.2I2es%r6GqW1&?unPGMg]YpLZ=Z*r\M+R?^01;sM((.?%q$UTbj4BmNB!e"'l+lGm>*Jl+Ak-R#YlErLB_U4,N/O@i-.3/E=2JA2h@Z#`"YLo8r;#-40O-qjjB'_HbBIMCa%MW,m.1ZoRk><J9/_M]`-I^g*;^0f6&?0&Be)bm+idb"+M*IiqOEN\GmQD.3da>N58XAG0ETM&SU6I3WK\3Io]XD&iY>ZOW!6IRHR^0i4gjc]V!G;`PT)RbBKh-#@Kd;UcJ7\fnoJqXH3)1%P:Ro+ie%:adVjqRVSG@+c3+U91SmJ"Kr!<l=;%L3:`'M3cr4/^n%o<hUlD$dgV(k!^$VTkZY7(]MuYOLpr/-rWOn@+66DBo-0KEq4f^r+e<@Dj,<]o0C,80]md.oEYtFardtcs"'E+8fXuE3AAj9)MS6oW=^/e$Kgh9%.0fo.(iRN_*-G[6Z#*1><s&9/88h<,#7l65p_W"#\a"57(:i-kOKf'",WZb$$o;KS=N"5.lA><gV#j.\q*m&_g_'UF3kZCM'T.*`jSB4&@&"VCQ;4@t8V$8-mg1O_i()oU^`>e@@-3L\F\!<@0da7Vp:BnEh<OW%K%lPDH7;'IQbC.7*NN;;b*1.JHC.U=%H,V[JdGG^(MM%%Y\Om=88@D(OT+dQ1D(":L=8_GO"+SAMMt^j8f*5UG6!I@[fKLK*!=E5D\"gV`:Gn"csg/QH,8K(H!C@7BgQAVS@0#a<Zb"CZ5KbQD&lM=O7mk98#BQO@5*/-JSUZ=/>YRm;#2(I_OqgVFAk-50<FYbbS.Ei/!,Bq#D3@JM_V!anJ5_Qi>CV9.Wf99hXA0TMaLDsuX0(,!XH,nRZt8q.O=)QWYl?j3i>#4`Z=.\ueq7aa^*=$Hmj<``fN<*n=@"?UVC<m8pT7JuWm&5T_p8c*);R`DQ]o<+N`g7XtB`!T5BPm]8ZlD'J8/K;38LMSZ.^i0R$*M.nCEI56$2IggiCDAjC=PAE#8t2Su[P@G[[KHR'jf>Lt7lU'FBqK^9#hVfhj41M"c1*3->S=^Te'%it>ttgc5nrt%csLPpkOfQ)#qQ-m7e(-6hD.SA5ra/^;AqEFFs1L:dp*8B&!Y$C/]:n2<:.[o46p/LBGV\P2D_T9c>D[0>ekBiT"s-&!FG<f"ctV'cEX<>b`/-N26^](5pBON98G[SbtSNu^aj1'SkH$;2+T8K]G\$A/[k!R!XjK@LHu61hbk](#N`>Ob2EXZ%EcAa^=Y('!t')G'sPiVMgWNEd*mnUF]U_L=!L/)/!jEl4j*Sg)$'K)[6\[_@I&n)EO].oU2V&njmmjZ85k3sk`(P.G!,h6e+`t46aQ3C15:YbVsgd3FW4YN,,1LQQ23*gT`]X5X2#+8l.V"%%El`2a`71Nj7N)P8U<4b">j7]&aMi9_/mQ$WAWF]a743Wo;0`I0?84*[k/S:*#8I:/C.*%?bSN,arK2$HZPL5-Pt7Le&1eL,b:Obp=qmD(f-1<cR.\e%Z_.H;Y6ICjCERYp*W(0F6`\ah>?`]G^=P<3J&af%'St96`qbIe'tiAHJ:21_mg&Y,_djg5-$Zb*A,NNJ%7B(+'R"+;k.n'M,<)D9g5><hVj0h@K$LFh+N$oD#=VnT^eL]hdW:Ua?\T^.uh8Odk[HiXShV7pU$YT7r;g*oR&$\;g;$^<>fuLmqQmmHb:[q&$nTf=n`*TTL6sE.u-%$Pi>!_1lUc>Oq"(@[mcg7_up$[!SlAQ^"tNcPnfo!R<uhcPtBW^\g>AtgV@Uh)]qlA768KZPS`b^Nrrlg$Xi#UO0XaMenG?DlLm';Xf^-R7Ej-e[SE&kP8=]MDcV?#5Aol"SYiB=NG=QI$0)_GAba`8r<TP&OL=i<BdNN?p&,?4'oq@udr"3O]T$0Hqq0\0>>m+"^YY1iZr)hoAp-UGFIfg.f:a0!G)q])pC*I5rW0[1o[3~>endstream
 endobj
 xref
-0 6
+0 9
 0000000000 65535 f 
-0000000009 00000 n 
-0000000058 00000 n 
-0000000115 00000 n 
-0000000210 00000 n 
-0000000336 00000 n 
-trailer << /Size 6 /Root 1 0 R >>
+0000000061 00000 n 
+0000000102 00000 n 
+0000000209 00000 n 
+0000000321 00000 n 
+0000000524 00000 n 
+0000000592 00000 n 
+0000000892 00000 n 
+0000000951 00000 n 
+trailer
+<<
+/ID 
+[<4696987aa0c40bba138a5dc05c920878><4696987aa0c40bba138a5dc05c920878>]
+% ReportLab generated PDF document -- digest (opensource)
+
+/Info 6 0 R
+/Root 5 0 R
+/Size 9
+>>
 startxref
-3068
+3047
 %%EOF

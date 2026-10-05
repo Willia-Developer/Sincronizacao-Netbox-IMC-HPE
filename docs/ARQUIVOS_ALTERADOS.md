@@ -1,46 +1,9 @@
-# Arquivos da versão corrigida
+# Mapa da migração
 
-- .gitattributes
-- .gitignore
-- ALTERACOES_REALIZADAS.md
-- ALTERACOES_REALIZADAS.pdf
-- COMO_INSTALAR_E_TESTAR.md
-- LISTA_DE_ARQUIVOS.md
-- LISTA_DE_ARQUIVOS.pdf
-- README.md
-- README.pdf
-- Requisitos-Permissoes-Dependencias-Servidor-Linux-IMC-NetBox.md
-- Requisitos-Permissoes-Dependencias-Servidor-Linux-IMC-NetBox.pdf
-- SINCRONIZACAO_IMC_NETBOX.md
-- SINCRONIZACAO_IMC_NETBOX.pdf
-- docs/ARQUIVOS_ALTERADOS.md
-- docs/RELATORIO_FINAL.md
-- docs/SEGURANCA.md
-- docs/VALIDACAO.md
-- docs/history-paths.txt
-- imc/.env.example
-- imc/SINCRONIZACAO_IMC_NETBOX.md
-- imc/desinstalar_cron.sh
-- imc/executar_sincronizacao.sh
-- imc/imc_client.py
-- imc/instalar_cron.sh
-- imc/legacy/netbox_client.py.disabled
-- imc/netbox_client.py
-- imc/policy.py
-- imc/runtime.py
-- imc/sincronizacao_imc_netbox.py
-- imc/sync.py
-- imc/testar_conexao_imc.py
-- imc/teste-home
-- requirements.txt
-- scripts/audit_security.py
-- scripts/mock_dry_run.py
-- scripts/render_pdfs.py
-- scripts/review_repository.py
-- scripts/validate.py
-- sincronizacao_imc_netbox.py
-- tests/conftest.py
-- tests/test_imc_netbox_core.py
-- tests/test_pilot_policy.py
+Código operacional: wug/client.py, profile.py, models.py, policy.py, netbox_client.py, sync.py, runtime.py e __main__.py. Configuração: .env.example e config/wug.example.json. Wrapper: scripts/executar_sincronizacao.sh.
 
-Arquivos locais de configuração, logs, backups e evidências históricas não são publicados.
+Testes: tests/test_integration.py e testes de CLI. Validação agregada: scripts/validate.py. Revisão documental: scripts/review_repository.py. PDFs: scripts/render_pdfs.py. Auditoria histórica: scripts/audit_security.py (ferramenta de investigação, não homologação).
+
+As entradas IMC agora encerram com orientação. O legado .disabled continua inativo. As documentações canônicas são README.md, SINCRONIZACAO_WUG_NETBOX.md, REQUISITOS_WUG_NETBOX.md e docs/CONTRATO_API_WUG.md; nomes antigos são mantidos como redirecionamento.
+
+Use git diff --stat e git diff para revisar a lista exata desta mudança.

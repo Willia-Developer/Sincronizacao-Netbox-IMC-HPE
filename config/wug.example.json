@@ -1,0 +1,27 @@
+{
+  "schema_version": 1,
+  "validated": false,
+  "product_version": "",
+  "validated_by": "",
+  "validated_at": "",
+  "evidence": "",
+  "allow_description_clear": false,
+  "device_map": {},
+  "interface_map": {},
+  "devices": {
+    "endpoint": "device-groups/0/devices",
+    "items_path": "data.devices",
+    "id_field": "id",
+    "name_field": "name",
+    "pagination": {"mode": "cursor", "container_path": "paging", "next_field": "nextPageId", "parameter": "pageId"}
+  },
+  "interfaces": {
+    "endpoint": null,
+    "items_path": "",
+    "id_field": "",
+    "name_field": "",
+    "description_field": "",
+    "pagination": {"mode": "cursor", "container_path": "paging", "next_field": "nextPageId", "parameter": "pageId"},
+    "vlans": {"enabled": false, "mode_field": "", "untagged_field": "", "tagged_field": "", "mode_map": {}}
+  }
+}
