@@ -1,6 +1,2 @@
-#!/usr/bin/env python3
-"""Etapa inspect: consulte README.md para a sequência de execução."""
-from etapas import main
-
-if __name__ == '__main__':
-    raise SystemExit(main('inspect'))
+"""Entrada IMC desativada: migração para WhatsUp Gold."""
+raise SystemExit("Fluxo IMC desativado. Consulte README.md e execute python -m wug --help.")

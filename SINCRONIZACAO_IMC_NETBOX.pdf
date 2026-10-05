@@ -1,200 +1,99 @@
 %PDF-1.4
+%“Œ‹ž ReportLab Generated PDF document (opensource)
 1 0 obj
-<< /Type /Catalog /Pages 2 0 R >>
+<<
+/F1 2 0 R /F2 3 0 R /F3 4 0 R
+>>
 endobj
 2 0 obj
-<< /Type /Pages /Kids [4 0 R 6 0 R 8 0 R] /Count 3 >>
+<<
+/BaseFont /Helvetica /Encoding /WinAnsiEncoding /Name /F1 /Subtype /Type1 /Type /Font
+>>
 endobj
 3 0 obj
-<< /Type /Font /Subtype /Type1 /BaseFont /Courier /Encoding /WinAnsiEncoding >>
+<<
+/BaseFont /Helvetica-Bold /Encoding /WinAnsiEncoding /Name /F2 /Subtype /Type1 /Type /Font
+>>
 endobj
 4 0 obj
-<< /Type /Page /Parent 2 0 R /MediaBox [0 0 612 792] /Resources << /Font << /F1 3 0 R >> >> /Contents 5 0 R >>
+<<
+/BaseFont /Courier /Encoding /WinAnsiEncoding /Name /F3 /Subtype /Type1 /Type /Font
+>>
 endobj
 5 0 obj
-<< /Length 2617 >>
-stream
-BT /F1 10 Tf 48 750 Td 14 TL
-(# Contrato técnico do piloto) Tj T*
-() Tj T*
-(## Fonte e limites) Tj T*
-() Tj T*
-(iMC é a única fonte da verdade. Fluxo: GET iMC, GET NetBox, comparação, relatório,) Tj T*
-(PATCH autorizado. Alteram-se apenas descrição e VLAN de interfaces existentes. Nenhum) Tj T*
-(objeto é criado ou excluído; nenhum dispositivo é atualizado.) Tj T*
-() Tj T*
-(A allowlist rígida, verificada na comparação e no transporte NetBox, contém) Tj T*
-(exclusivamente:) Tj T*
-() Tj T*
-(ALLOWED_INTERFACE_PATCH_FIELDS = {) Tj T*
-(    "description", "mode", "untagged_vlan", "tagged_vlans",) Tj T*
-(}) Tj T*
-() Tj T*
-(mode só muda para representar a VLAN confirmada. Campos desconhecidos bloqueiam o) Tj T*
-(payload inteiro. Não há atualização de enabled, status, up/down, velocidade, tipo, IP,) Tj T*
-(MAC, site, rack, comentários, tags ou custom fields.) Tj T*
-() Tj T*
-(Os clientes bloqueiam métodos antes da rede. A sessão também valida requisições) Tj T*
-(diretas e preparadas. PATCH só pode atingir uma interface individual.) Tj T*
-(Redirecionamentos não são seguidos. Código legado fica em) Tj T*
-(imc/legacy/netbox_client.py.disabled, com bloqueio explícito, fora dos imports e sem) Tj T*
-(habilitação por ambiente.) Tj T*
-() Tj T*
-(## Correspondência e normalização) Tj T*
-() Tj T*
-(Dispositivo: nome exato sysName, ou campo label/name quando o anterior não estiver) Tj T*
-(presente. Nome vazio não tem fallback por IP. Interface: nome exato ifName, name ou) Tj T*
-(ifDescription, nesta ordem por presença de campo. Não se expande abreviação nem se) Tj T*
-(associa por posição na lista.) Tj T*
-() Tj T*
-(O nome técnico ifDescription não é usado como descrição. A descrição usa ifAlias,) Tj T*
-(description ou ifDesc, nesta ordem por presença.) Tj T*
-() Tj T*
-(- None/null ou string vazia explícitos: descrição vazia, podendo limpar a descrição) Tj T*
-(existente.) Tj T*
-(- Campo ausente ou tipo inesperado: preservar a descrição NetBox e registrar aviso.) Tj T*
-(- Remover somente espaços no início/fim; preservar maiúsculas, acentos e espaços) Tj T*
-(internos.) Tj T*
-(- Resposta inválida ou erro de parsing da coleção: preservar os objetos envolvidos.) Tj T*
-() Tj T*
-(Dispositivos/interfaces duplicados no iMC e correspondências duplicadas no NetBox são) Tj T*
-(bloqueados. A interface retornada deve pertencer ao dispositivo consultado.) Tj T*
-(Dispositivo ausente no NetBox é descarte esperado: registrado pelo nome, sem consultar) Tj T*
-(interfaces, sem criação e sem aumentar o contador de erros.) Tj T*
-() Tj T*
-(## VLANs) Tj T*
-() Tj T*
-ET BT /F1 9 Tf 48 32 Td (Piloto iMC - NetBox | 1/3) Tj ET
-endstream
+<<
+/Contents 10 0 R /MediaBox [ 0 0 595.2756 841.8898 ] /Parent 9 0 R /Resources <<
+/Font 1 0 R /ProcSet [ /PDF /Text /ImageB /ImageC /ImageI ]
+>> /Rotate 0 /Trans <<
+
+>> 
+  /Type /Page
+>>
 endobj
 6 0 obj
-<< /Type /Page /Parent 2 0 R /MediaBox [0 0 612 792] /Resources << /Font << /F1 3 0 R >> >> /Contents 7 0 R >>
+<<
+/Contents 11 0 R /MediaBox [ 0 0 595.2756 841.8898 ] /Parent 9 0 R /Resources <<
+/Font 1 0 R /ProcSet [ /PDF /Text /ImageB /ImageC /ImageI ]
+>> /Rotate 0 /Trans <<
+
+>> 
+  /Type /Page
+>>
 endobj
 7 0 obj
-<< /Length 3162 >>
-stream
-BT /F1 10 Tf 48 750 Td 14 TL
-(VIDs válidos: 1 a 4094; nenhum VID é fixado ou filtrado como regra operacional. VID) Tj T*
-(não é o ID interno NetBox: a resolução acontece antes da comparação. Texto numérico,) Tj T*
-(objetos contendo VID, ordem e duplicatas são normalizados.) Tj T*
-() Tj T*
-(A consulta a portvlan precisa completar com sucesso. Access exige nome de modo/ifIndex) Tj T*
-(inequívoco nos dados disponíveis e uma única VLAN igual ao PVID; falha em trunk/hybrid) Tj T*
-(é registrada, mas não bloqueia esse access confirmado. Trunk exige classificação) Tj T*
-(completa e PVID confirmado na associação; esse PVID representa a VLAN nativa e as) Tj T*
-(demais VLANs são tagged. Essa semântica ainda exige validação na instalação real do) Tj T*
-(iMC.) Tj T*
-() Tj T*
-(Hybrid é reconhecido, mas bloqueado enquanto os dados disponíveis não distinguirem) Tj T*
-(inequivocamente VLANs tagged e untagged. O PVID sozinho não é suficiente. Também não) Tj T*
-(se representa trunk sem PVID confirmado, tagged-all ou múltiplas VLANs untagged por) Tj T*
-(inferência.) Tj T*
-() Tj T*
-(VID ausente ou duplicado no contexto escolhido bloqueia a proposta inteira da) Tj T*
-(interface, inclusive descrição. NETBOX_VLAN_GROUP_ID restringe a busca e valida o) Tj T*
-(grupo retornado. Sem configuração de grupo, exige VID único global. A seleção de grupo) Tj T*
-(deve refletir o contexto real, sem inferência automática.) Tj T*
-() Tj T*
-(Resposta vazia, timeout, autenticação inválida, coleção incompleta, modo desconhecido) Tj T*
-(ou parsing inválido preservam toda a interface. Não há suporte a remoção de todas as) Tj T*
-(associações por ausência de VLAN no iMC.) Tj T*
-() Tj T*
-(Uma lista tagged pode ser esvaziada quando uma configuração access completa confirma) Tj T*
-(que a interface possui exclusivamente o PVID. Uma associação nativa pode ser) Tj T*
-(substituída por outra confirmada. Essas transições são comparadas antes do PATCH.) Tj T*
-() Tj T*
-(## Endpoints ativos) Tj T*
-() Tj T*
-(| Serviço | Método | Endpoint relativo |) Tj T*
-(| --- | --- | --- |) Tj T*
-(| iMC | GET | /imcrs/plat/res/device |) Tj T*
-(| iMC | GET | /imcrs/plat/res/device/{device_id}/interface |) Tj T*
-(| iMC | GET | /imcrs/vlan/portvlan?devId=...&ifIndex=... |) Tj T*
-(| iMC | GET | /imcrs/vlan/access?devId=... |) Tj T*
-(| iMC | GET | /imcrs/vlan/trunk?devId=... |) Tj T*
-(| iMC | GET | /imcrs/vlan/hybrid?devId=... |) Tj T*
-(| NetBox | GET | /api/dcim/devices/?name=... |) Tj T*
-(| NetBox | GET | /api/dcim/interfaces/?device_id=...&name=... |) Tj T*
-(| NetBox | GET | /api/ipam/vlans/?vid=... |) Tj T*
-(| NetBox | PATCH | /api/dcim/interfaces/{id}/ |) Tj T*
-() Tj T*
-(iMC pagina com start/size até uma página vazia, inclusive após páginas curtas; NetBox) Tj T*
-(usa offset/limit. Endpoints que ignoram paginação ou repetem páginas falham com) Tj T*
-(segurança. XML usa coleções list com os elementos device, interface, vlan, accessIf,) Tj T*
-(trunkIf e hybridIf; JSON aceita coleções homônimas ou list. Formatos diferentes geram) Tj T*
-(pendência, não associação inferida. Validar esse contrato na versão do laboratório) Tj T*
-ET BT /F1 9 Tf 48 32 Td (Piloto iMC - NetBox | 2/3) Tj ET
-endstream
+<<
+/PageMode /UseNone /Pages 9 0 R /Type /Catalog
+>>
 endobj
 8 0 obj
-<< /Type /Page /Parent 2 0 R /MediaBox [0 0 612 792] /Resources << /Font << /F1 3 0 R >> >> /Contents 9 0 R >>
+<<
+/Author (Projeto WhatsUp Gold - NetBox) /CreationDate (D:20261006000142+09'00') /Creator (\(unspecified\)) /Keywords () /ModDate (D:20261006000142+09'00') /Producer (ReportLab PDF Library - \(opensource\)) 
+  /Subject (\(unspecified\)) /Title (SINCRONIZACAO_WUG_NETBOX) /Trapped /False
+>>
 endobj
 9 0 obj
-<< /Length 2791 >>
+<<
+/Count 2 /Kids [ 5 0 R 6 0 R ] /Type /Pages
+>>
+endobj
+10 0 obj
+<<
+/Filter [ /ASCII85Decode /FlateDecode ] /Length 2531
+>>
 stream
-BT /F1 10 Tf 48 750 Td 14 TL
-(antes de aplicar.) Tj T*
-() Tj T*
-(## Execução) Tj T*
-() Tj T*
-(Dry-run padrão consulta tudo, normaliza, compara, valida, apresenta valores) Tj T*
-(anteriores/propostos e não envia PATCH. Interface igual é contabilizada como já) Tj T*
-(sincronizada.) Tj T*
-() Tj T*
-(Antes da aplicação há resumo detalhado conforme o README. A CLI principal exige) Tj T*
-(--device NOME ou --all-devices junto de --apply. A entrada aplicar_switch.py exige um) Tj T*
-(nome e confirmação SIM; sincronizar_producao.py seleciona todo o inventário e oferece) Tj T*
-(dry-run padrão. A aplicação não interativa em produção exige --apply --non-) Tj T*
-(interactive.) Tj T*
-() Tj T*
-(Antes de cada PATCH, nova leitura verifica ID e snapshot da interface. Se mudou, o) Tj T*
-(PATCH é bloqueado. Isso reduz conflitos, mas não oferece transação atômica entre GET e) Tj T*
-(PATCH. Uma alteração concorrente após a nova leitura ainda é possível.) Tj T*
-() Tj T*
-(Falha em uma interface não interrompe as demais. Logs apresentam resultado individual) Tj T*
-(e resumo final; falhas retornam código diferente de zero. Código 0: execução sem) Tj T*
-(erros; 1: pendências/falhas no processamento; 2: configuração, lock ou falha global.) Tj T*
-(Cancelamento interativo registrado não envia PATCH.) Tj T*
-() Tj T*
-(Depois de PATCH, GET verifica ID e campos propostos: applied só aumenta quando) Tj T*
-(confirmados. Timeout ou desconexão após envio exige reconciliação por GET, sem) Tj T*
-(repetição automática. accepted indica resposta HTTP de sucesso; uncertain identifica) Tj T*
-(envio incerto; unconfirmed registra tentativas cuja alteração não pôde ser confirmada.) Tj T*
-() Tj T*
-(## Logs e concorrência) Tj T*
-() Tj T*
-(Logs em logs/pilot.log, com data/hora UTC, UUID, commit e indicação de alterações) Tj T*
-(locais, modo, propostas e resultados. Rotação: 5 MB por arquivo, cinco backups.) Tj T*
-(Diretório 0700, arquivos criados com umask 077. Não registrar corpos completos de) Tj T*
-(resposta, senhas, tokens, cookies ou cabeçalhos de autenticação.) Tj T*
-() Tj T*
-(O filtro central mascara credenciais conhecidas e padrões de segredo, inclusive URLs) Tj T*
-(com usuário/senha. A descrição pode conter texto livre: restringir acesso aos logs e) Tj T*
-(nunca versioná-los.) Tj T*
-() Tj T*
-(Python usa flock no arquivo fixo .pilot.lock da raiz. O wrapper usa também) Tj T*
-(.wrapper.lock. Bloqueio cobre execução direta e wrapper na mesma cópia do repositório;) Tj T*
-(cópias distintas exigem coordenação operacional. Não remover arquivos de lock durante) Tj T*
-(execução.) Tj T*
-() Tj T*
-(Execução manual única, sem loop. Instalador de cron está desativado. Agendamento) Tj T*
-(somente após validação e por um único mecanismo.) Tj T*
-ET BT /F1 9 Tf 48 32 Td (Piloto iMC - NetBox | 3/3) Tj ET
-endstream
+Gatm<gN)%<&q/A5oHU[g5m.5X@TB6sO^bFjZ)pE9ntN/6&/\=*"Ye"+^rYBgJ)A^2\5Ci*S#hMonM\kPF8GOn*elMj,BWt7K'9g(S\GX`SC)XU@3!4mrfOp%T*1'`*/-*NbLn(769MlXT5RIsMJ!WY<)A`G_/,7Xq-?bi-`sKsRp$!ec;HJ,PPL)fGT*\r1H[=';%f#EnV49-#<$5I=O?-\7oA%8(#A(9UU+n'XfT:d:\6<OHAL]\VKSF%,$12R2!OBc=/ER&7pY=`n&.R-0CTclWaqO>ZBjCpq?*l"`fZ58-1R-o2Xd/jULh34oKb'C0jb(,j_>++n3o$:9uGMOJlrpCjpC!_8\B@mPURnpoDCJ+'J^F[#K://h5^fgY;;VPl*<4Ael4k%8XPeneW^BGW_AC)eYh@O?"@RQ"q]rnGT=^ArBIQAOe]^TA"?jT,6obG8Xo!;O$NQcq0Y1E3BqHp3?M\HQ6"YUltP`+B(nFJcH5-O8p)b%D((U493!o?%,[?(']?b4V=D9o''?$/mOm*mIqO*8]J*QPb*H9u7l&@YGK<@U9AAMbo8F,V.e9sg"X6iKBk5=,KEX>;\5`gU0MFsdie#=M9SG8mg8LPnfWE6R[LI&E8;kf1X\+_lMU9kid/.H8JtnFJWtFD5SqktEVEVa8l95T>GATf@e;_OH/-s"T!$lVU(oRA"+"uO*"4V;P-Y7(r/dpn@6L5=e[9*/&FM(X5hS_j4Yd-.bPidrL^%m1@>@?SXp*e=`fVfclp7\">XV!.DF(K]EC:nn7H,Vs^<U&OWKr_CW*Nr>QW/2=(GV"AU^AQk<,l4T/rb-K<Bs)u2:jmFLL5\lX7r@<^d'Z4_ES^?dcK&#k.appk6&!TpDIF]].oB:@d!Eb@;+\T^.[dV`R]X_8N@s[;HhEd2ds4'J6I>_)M(4XG*5q6nmhnDqOlm[GrW>KQb;*)OC*+L`-!ju!BU!*i'p(H*2n60,B%#)ij:b[IkUd1=g;DN(+C=\t5'<R7&q"Ue]7,0X_ZuZ$^A]%o'b'j3pF,`uXJGiWG\R-H3BFh0C*O'@5a&V0UPqg>n?:F#S(mi;gUB,>&;m!Q5Y$IVWH-;bTt)=3,HWeL;*7>pT_mHAEecfM:ibAQWaMJ4R;n-;-s&h`57&=kpI6(Tk$lpYTR<b[@$@CbYCM(1h^I"22tOgq+:N3<=lF0CI'o)`qh0>4gjg]N2APLK\.6n>ElDAqo]ed@&t\VUrZ[rUbBU>00MmcX?nMQ_SQ(qP(lM0ND:u2"<8qDj7E->.D#sUbL_>MfMN`lq/f!d<e(2M>G)Ci\_FWQ%6jfW/8lpr,:1h<6p6rs^@B$dj\.T&J;`n@)!F>O2D/NVJ:$MD8*->)EO%gdDUMIVp`EL*#^Vb-V0WqQ+A`/KQ0,j/j-oKeSmdOI&8Cdp[!3.#eb#o/:4aalT/UE]E-AE2/;&C&_;/Eab=ca*5*.#FG1C4@QRfnI%kQ&'rHMk9-.QdB%T0XodZQY4@Q<rJ>,j5M\b[GUdc[Uh$mk>DW#c[t)>2F'6S%@!u-'`$L)<,oP\9C<\j_,2Cm1GuXO_nV,9n<Id6tQ7ckmA>5$H68mKmR):\AoKn`5b`3empl-aArasbHLbMnE/Eh5#INuCGuW#7V<1rANL9.''NHG(4F4M59sJmNh&p$5Ts1kZ0p$ef-geK=EC]CN7;ahWBQ9Tc`l]jhOP9$F(bTQ7'U/4*uR,.qIo]4\9=3KOS[mrFj/r`1&J"f>O0M"?,`2t'T;NjZ:CH+3E9rdEI1rb^p)uh1/A&@j*W]W+3o8[B&fW&Gg:Y>S'm.o@:gX>RR7]YBmpUp5^.h?*IJ8I&$"s:jd<ouJu?]gBP-1O2lIHhm.HJe\3$jUi'Zm$);"AS1%<lA7@aLk;WFW(geu>uKpuEGTItIW(`E(Sbpa+IdEpU:!?XAs-:\O.388&Oknd8?,ql.pqSi!;4+<Z!cEtHIgg,J:7gS=da<-r_X'Q:^h'G_djnHFa#Udi=/Vi""l.tF+i4/o1)$W'B$c&"t4?:V0D<BZPXE+@GWpajlA!fBZ>S.KELf4`ME.kBJS.9tg[&/nX*3Q/GX/7N\;*!o!qXU3D^Z;hoaTZe:E4p#`Wh'*g)T(os'!STUqnMNl1a'Tt*JF-!R5W(MG"BD&pStq#Je2\#1>MSXL6$_XW]2)Xr;<0:qtE+Ne>P\`j31UafN0c1l%f.[D_DZ$V%jMtfe@%IP^238`6_4kB;I6,S8j[cqW1BAVgeDqkB_('OTEpb^M&7H>a_ZJnd3>TZbBuPAmA^3mWr`[jW#YedeuM<R/d!ShuXTf(NHa&[uO*7HJ4!ub2&CuMIIEI/A$3R>G>aplC(o0jLVXg_NkpiDb=n.VDh3rr!s0oCoWI4s+]WR4FOKCnn_]uY;BL_!Spr&3g_ds>])7BZB>ubKU_G^kFN&5H<\+t&oLdI*T^'^E9D3A_R"9o9TR6OEj,+S?JYU8Tgq>"n<IbWmhD-l5pY:95.,b`N7`#!64G.^-b`'U<=!FLkOT,1aaX;H(D?'~>endstream
+endobj
+11 0 obj
+<<
+/Filter [ /ASCII85Decode /FlateDecode ] /Length 904
+>>
+stream
+Gat=h?#S1G'Sc)R/)JI$8f$Tj.?fkG1aXJ)_,eM!DS3n^%?@"48VI^?Sn#6&;a=#C;<oQPcH#OjV[P:c/::MNE3[F93sM!Y]`H<N%-nG6>0ipSRADH%<$od>B=*ETp3NTu---p,jEVXibIm=g$?rgDXO;l-7E&3$1gt[76BoIR.S4;*P;H'D)uft$e3br(HEkHebEhnjF,+P+C:nkF)pr#[n+_a_qm8n0fbj(cOu9EPb\!WG(?a>=egT#:q_VO*-T1+@Y(c;_$`q*PrR+b&8XF(dn#Ub+RS8`)cGlSN/;l>7b>h-<BHn!+Vj5:n@NQh&N!%)T[m%RckcATSZlC$f[N)[Tn!'n#AJuuG$Zt1p#]E]rls[6AK`e4WX>H5lG,?$,kS?okkEXF6Bj4nbG7M<I[AAR?2)=@.Bk?Bd#rKdeE!8rJXAS86=5Udu3oJoZAS%T-s.AL9AWTY)7.Da=Wrc/8fWrRaqW?Jr%k.7F8HP1^-=pS*[?L93RO>\0*!0/?6T;GI4oD@>U.h/D,0g-;`?fMuA;^-<6UVX5^b%\_XtlPN5SCprYG=25a>W83%qMsfa3#1MEjnL)SRj`X/P*3;lKJ>QQ94C`7<H5:p0:C%grO[<SdstZp5U[RFTY7\i4.M2I0bL8CD#N#O?k:&-(HdD(e]RG"fuE"1;Vu.!fiR^._#)"8*,)_4\;bOONpA>QjC0"('j_i1;#K!cF<VboeX<1deJ:qq+,t4*d>K4"2$>:^0O%S.")YW(_2QI3kl]T?nr</briqo:k"9U[)?IQGlZ)PU7OJC:du#M*<&n]h!A7S_U%?(5kII^pDcaHbr`BlrTc.b&Ds>MV%!`!/WVqBd<PEXOuBuFTtiC+QqC^:fC`""PNh[n)s:+G!#WiUXoN(K!3P%O_>~>endstream
 endobj
 xref
-0 10
+0 12
 0000000000 65535 f 
-0000000009 00000 n 
-0000000058 00000 n 
-0000000127 00000 n 
-0000000222 00000 n 
-0000000348 00000 n 
-0000003017 00000 n 
-0000003143 00000 n 
-0000006357 00000 n 
-0000006483 00000 n 
-trailer << /Size 10 /Root 1 0 R >>
+0000000061 00000 n 
+0000000112 00000 n 
+0000000219 00000 n 
+0000000331 00000 n 
+0000000436 00000 n 
+0000000640 00000 n 
+0000000844 00000 n 
+0000000912 00000 n 
+0000001219 00000 n 
+0000001284 00000 n 
+0000003907 00000 n 
+trailer
+<<
+/ID 
+[<4429a0fcec169ba30fda52d9bc2db52b><4429a0fcec169ba30fda52d9bc2db52b>]
+% ReportLab generated PDF document -- digest (opensource)
+
+/Info 8 0 R
+/Root 7 0 R
+/Size 12
+>>
 startxref
-9326
+4902
 %%EOF

@@ -1,121 +1,74 @@
 %PDF-1.4
+%“Œ‹ž ReportLab Generated PDF document (opensource)
 1 0 obj
-<< /Type /Catalog /Pages 2 0 R >>
+<<
+/F1 2 0 R /F2 3 0 R
+>>
 endobj
 2 0 obj
-<< /Type /Pages /Kids [4 0 R 6 0 R] /Count 2 >>
+<<
+/BaseFont /Helvetica /Encoding /WinAnsiEncoding /Name /F1 /Subtype /Type1 /Type /Font
+>>
 endobj
 3 0 obj
-<< /Type /Font /Subtype /Type1 /BaseFont /Courier /Encoding /WinAnsiEncoding >>
+<<
+/BaseFont /Helvetica-Bold /Encoding /WinAnsiEncoding /Name /F2 /Subtype /Type1 /Type /Font
+>>
 endobj
 4 0 obj
-<< /Type /Page /Parent 2 0 R /MediaBox [0 0 612 792] /Resources << /Font << /F1 3 0 R >> >> /Contents 5 0 R >>
+<<
+/Contents 8 0 R /MediaBox [ 0 0 595.2756 841.8898 ] /Parent 7 0 R /Resources <<
+/Font 1 0 R /ProcSet [ /PDF /Text /ImageB /ImageC /ImageI ]
+>> /Rotate 0 /Trans <<
+
+>> 
+  /Type /Page
+>>
 endobj
 5 0 obj
-<< /Length 2934 >>
-stream
-BT /F1 10 Tf 48 750 Td 14 TL
-(# Requisitos de acesso - laboratório e produção) Tj T*
-() Tj T*
-(O projeto será apresentado aos responsáveis antes da aplicação no ambiente) Tj T*
-(corporativo. O laboratório testa um switch selecionado. Em produção, lê todo o) Tj T*
-(inventário IMC, compara nomes e atualiza somente interfaces existentes. Devices) Tj T*
-(ausentes no NetBox são descartados e documentados nos logs.) Tj T*
-() Tj T*
-(## Servidor de execução) Tj T*
-() Tj T*
-(Linux, Python 3.10+, Bash e flock \(util-linux\). Instale as dependências de) Tj T*
-(requirements.txt em ambiente virtual. Administração do servidor é necessária para) Tj T*
-(provisionamento e instalação de pacotes quando não estiverem disponíveis; a execução) Tj T*
-(usa usuário de serviço sem sudo.) Tj T*
-() Tj T*
-(Reserve diretório de aplicação, ambiente virtual, arquivo .env protegido e logs com) Tj T*
-(acesso restrito. Configure DNS, relógio sincronizado, certificados/CA interna e) Tj T*
-(política de retenção dos logs. O script não abre portas de entrada.) Tj T*
-() Tj T*
-(## Matriz de comunicação para preencher no chamado) Tj T*
-() Tj T*
-(| Origem | Destino | Protocolo | Porta efetiva | Necessidade |) Tj T*
-(| --- | --- | --- | --- | --- |) Tj T*
-(| Servidor executor | API do IMC | HTTPS/TCP | Confirmar instalação; padrão do cliente) Tj T*
-(8443 | Obrigatória nas etapas IMC |) Tj T*
-(| Servidor executor | API do NetBox | HTTPS/TCP | Definida em NETBOX_URL; 443 sem) Tj T*
-(porta explícita | Obrigatória nas etapas NetBox |) Tj T*
-(| Servidor executor | DNS corporativo | Conforme serviço DNS corporativo | Confirmar |) Tj T*
-(Quando usar nomes |) Tj T*
-(| Servidor executor | Serviço de horário corporativo | Conforme infraestrutura |) Tj T*
-(Confirmar | Relógio confiável para logs/TLS |) Tj T*
-(| Servidor executor | Repositório de dependências ou proxy | HTTPS ou protocolo) Tj T*
-(aprovado | Confirmar | Instalação/atualização; pode usar pacotes offline |) Tj T*
-(| Estação administrativa | Servidor executor | Acesso administrativo aprovado, por) Tj T*
-(exemplo SSH | Confirmar | Provisionamento/manutenção, não comunicação do sincronizador) Tj T*
-(|) Tj T*
-() Tj T*
-(Substituir os destinos e portas por valores reais antes de abrir o chamado. HTTP em) Tj T*
-(laboratório exige configuração explícita e não protege o tráfego; portas incompatíveis) Tj T*
-(são rejeitadas. Em HTTPS, validação TLS é obrigatória e CA interna pode ser) Tj T*
-(configurada por IMC_CA_BUNDLE/NETBOX_CA_BUNDLE.) Tj T*
-() Tj T*
-(Se houver proxy, verificar HTTP_PROXY, HTTPS_PROXY e NO_PROXY para as APIs internas.) Tj T*
-(Não é necessário acesso à internet durante execução se dependências e endpoints) Tj T*
-(estiverem disponíveis internamente.) Tj T*
-() Tj T*
-(## Permissões das contas) Tj T*
-() Tj T*
-(| Serviço / objeto | Leitura | Alteração | Criação/exclusão |) Tj T*
-(| --- | --- | --- | --- |) Tj T*
-ET BT /F1 9 Tf 48 32 Td (Piloto iMC - NetBox | 1/2) Tj ET
-endstream
+<<
+/PageMode /UseNone /Pages 7 0 R /Type /Catalog
+>>
 endobj
 6 0 obj
-<< /Type /Page /Parent 2 0 R /MediaBox [0 0 612 792] /Resources << /Font << /F1 3 0 R >> >> /Contents 7 0 R >>
+<<
+/Author (Projeto WhatsUp Gold - NetBox) /CreationDate (D:20261006000142+09'00') /Creator (\(unspecified\)) /Keywords () /ModDate (D:20261006000142+09'00') /Producer (ReportLab PDF Library - \(opensource\)) 
+  /Subject (\(unspecified\)) /Title (REQUISITOS_WUG_NETBOX) /Trapped /False
+>>
 endobj
 7 0 obj
-<< /Length 1829 >>
+<<
+/Count 1 /Kids [ 4 0 R ] /Type /Pages
+>>
+endobj
+8 0 obj
+<<
+/Filter [ /ASCII85Decode /FlateDecode ] /Length 2207
+>>
 stream
-BT /F1 10 Tf 48 750 Td 14 TL
-(| IMC: dispositivos, interfaces e VLANs | GET | Não | Não |) Tj T*
-(| NetBox: dcim.device | GET | Não | Não |) Tj T*
-(| NetBox: dcim.interface | GET | PATCH, somente nas etapas de aplicação | Não |) Tj T*
-(| NetBox: ipam.vlan | GET | Não | Não |) Tj T*
-() Tj T*
-(Não é necessário privilégio administrativo global nos produtos. Para os primeiros) Tj T*
-(testes, usar apenas leitura. Depois, conceder ao usuário/token permissão de alteração) Tj T*
-(de interfaces do escopo aprovado. A allowlist de campos é imposta pelo código, não) Tj T*
-(substitui as permissões e restrições do NetBox.) Tj T*
-() Tj T*
-(Os campos possíveis são description, mode, untagged_vlan e tagged_vlans. Enabled,) Tj T*
-(status, IP, MAC e dispositivos permanecem fora do fluxo de escrita. Dispositivos,) Tj T*
-(interfaces e VLANs precisam ser provisionados previamente por processo separado.) Tj T*
-() Tj T*
-(## Sequência de validação) Tj T*
-() Tj T*
-(Seguir o README oficial \(README.md\): conexão IMC, descoberta, inspeção do switch,) Tj T*
-(conexão NetBox, comparação, simulação e aplicação controlada. Escolher grupo VLAN se) Tj T*
-(necessário; conferir o significado de ifIndex, PVID e tagged/untagged na instalação) Tj T*
-(real. Hybrid e dados inconclusivos são preservados.) Tj T*
-() Tj T*
-(Após aprovação e testes, usar sincronizar_producao.py para todo o inventário. Cada) Tj T*
-(execução é única; instalador cron permanece desativado nesta versão. O bloqueio por) Tj T*
-(flock protege a mesma cópia do projeto, não cópias em servidores distintos.) Tj T*
-() Tj T*
-(Credenciais ficam somente no .env protegido. A rotação de credenciais anteriormente) Tj T*
-(expostas precisa de confirmação no sistema de origem; os testes offline não a) Tj T*
-(comprovam.) Tj T*
-ET BT /F1 9 Tf 48 32 Td (Piloto iMC - NetBox | 2/2) Tj ET
-endstream
+Gatm;rGU.U&H0:l`Vc+89:\&No0FZJTYOR-9!:tJ:-q8dH]p)7?F+FF"l18MDq88eWPSs<"_h^uG37%rDoOu#n`.7]j,E3tP")X&ngCeLP95)o/^N\Co#R<F_nZf)RnmX)jQ"^;>eN>D.@a5u;asUuG`u8ej_lSR+#U=c*,=G,gIT0!O/<<U_JufI9^k'7"AqEr_[lN:5);58K,G-Th29Y;'_GS,#ou7,$X#[Fp[g,PGTTV36u=bt7B-u_B[Z3hWcEAO[lW!;hMCnl35`Kr;^(a#k,&!8Q60i:4(kj?>SPJoZ>"Za^N8/mUFrN+c)*:85$uM7(+sjl`RnNkad`))C`3n#Mo*Gc;T9Djbg@r*j>.Pb#K:NI9gdDnVI`)H/,?_R<gDAK8]9%\D+PpcP::9EBI%Gaddc1X8FS;1lmE\K9Tjk_H9^R<#M7C?<MBpKOqcj/Qla]sN4qkl3hPi90Qn6RSes:SJo5(BAE8b5=*\pQUrtFQXj/Bbr:(jrg<+fdJ>g>[;p!:3+%2;T<e</)'!]lq8=ttENma6EUZ+q'?O4.:,k->g<!X^FLd`kcDH-m)k``H4JWYXEAL^`-[pP`@6Eo(AM=a!!9hL]%f0ibmH!bbt-BZ)E=ncJu)1mBa7K^%l:ar[b#K^XbjXsu))-**g;M^ah"_s4p,m,/V#nhD)50?cM#8%I_haMoJIMD;g3\LZ53Yj-faB2SmPD3P;YLTN(C&-u3ZQVmZUIndH_X,@b<0Wo^;3%uf;1^I?T*PT=TtYhp@jUE96lF\7MM'CoRdFi.]Y'SN<D'PP6PA=+.U:_(.'LH%Bdn%q+iYkZ/*%([Cr=Z<nG%oKV28JJ3clYEiV,AG4l2<B\J==b!<B!/dqDa\1]dBU0dF4P)I-bP"?j@Z)q+DMfPI?$d`,7?G-"Q?/j[BCfg=k:V4:1NQ817%FH/+Y1Y&RaKcMJp?.Cn3mJ4'rF>['d.N9G5)7^l!U[juq*kcNpNua]&R33Q6MflJsA,L!i<=)tlL1ujn*>-;V@Im,[?TXduQ6JaSO-]X+b`RCl6ns@mEtB,;3cYPXZm8q>?BtFi5/"6:_Y>80#h$IV?mtC4c1SA([H*tcknB'T+7uo"YrA95GaSIN%5-pt:j4J<8.n\QcL=EP)L1sMEdS+b)4FWAj(^qC<=W#n9gqFPYlBUF;<S]ME&2%"MtK]:dD2NZD="S'<nR'4k-[]t..2iT.b1b$+I,q;)o%^?g<S*m6t4KtlZDT?Gq[Y'EKM^aY67]@pM#k0X-G9Q&EUuDFB[^%_ZXS-,/l?$o+#mqSGBolq"<oln??p)UQTgJ4E=,;XDK9C\?Ju3IHW#^=YgPL,V.?81b@l1faR0.[UtbPY!`aWg^5q?pe'.iLIb<1:cCm=D<<'g+/bAZckK8!N5I/>f%)*OUZ!R7Ml_GJ)p)tO+EL*#E?YSH;oR0I@9'A96M-iRH^p3\?Zb66Bb"\I1i$Ia"N^3^UDb`>#b'Bq"k,PCW%9TT8]=j!*/,OhG0h.N<-,rX]0`MU0Q[TYnCP<1;a/ABA18"O/suYLl[P-'Vejpd"P$O;g2Qo0\mn??GEDP+aW"QC?leH-j8JYa?.X5<e,&IbWC:/%ai8!)VnY1$IS)CtYdm+k:$0("l6AWpETqIX_5+oR$Ef3XbB2>+fTo.MmeFUsi*a`jRsakkEd;rTSd/@:Ap']di3Y6>?Yku.=R_S`B"FV&(%r=K_Z1%^Y`1/ViI*qEp^AgF3,^M\6WQ'&`-\RE.>Wb(ob]$d7SC1kFSCs8#1q4L8!g+ifA4j0I!!eGM+(dF&$F-fZ.Agf=F`032E3u^/s0hoEogRFIK*m2&d/kIZMp;L_N*HCjcK=XH1g=gIm2XmSKn0OR<G[GZ]F+BmRQ.7/pY!F+>=6UmCI5.Zu\L:90',].qQ%)p6F3%Ut[9%d]tT,/Qdt<@Mcpge_<AkG)i[mV"HX^\2kHr"iL&\,MTKAqhN@0-1[E>0[$4SWQH5FF[[21W657;;r3?fm4B2OA:fT248pqTHh6BtKR2c=Z/%uYe88#Ih&K&(O2<"+1`43',S[nO?S1R!&_a2hiNP&r>,&oQ\)A=Mcfj`F]`m2j1;<.AhV&8JWVNrSf/[?9H.Fh)^n%\29,<_gmKs4%C;K#tm0:;?D`7)?k+M#%WnU_B2YF0(0X#Y3XBRaA&Ar;EONiC/1]sMY]W&o[GWC/iOm2'oQ+e?;~>endstream
 endobj
 xref
-0 8
+0 9
 0000000000 65535 f 
-0000000009 00000 n 
-0000000058 00000 n 
-0000000121 00000 n 
-0000000216 00000 n 
-0000000342 00000 n 
-0000003328 00000 n 
-0000003454 00000 n 
-trailer << /Size 8 /Root 1 0 R >>
+0000000061 00000 n 
+0000000102 00000 n 
+0000000209 00000 n 
+0000000321 00000 n 
+0000000524 00000 n 
+0000000592 00000 n 
+0000000896 00000 n 
+0000000955 00000 n 
+trailer
+<<
+/ID 
+[<df94c2f0922570a4375473af20f41349><df94c2f0922570a4375473af20f41349>]
+% ReportLab generated PDF document -- digest (opensource)
+
+/Info 6 0 R
+/Root 5 0 R
+/Size 9
+>>
 startxref
-5335
+3253
 %%EOF
