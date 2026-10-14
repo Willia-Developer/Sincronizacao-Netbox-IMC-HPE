@@ -77,9 +77,3 @@ imc/teste-home*
 !imc/teste-home
 artifacts/
 /docs/auditoria-*.json
-
-# Integração WhatsUp Gold: configurações/evidências reais nunca versionadas.
-.env
-config/wug.json
-relatorios/
-.pytest_cache/

@@ -1,1 +1,3 @@
-Fluxo IMC desativado. Consulte README.md. Nenhum dump de inventário real é fornecido.
+Dump de inventário removido do estado atual por conter dados internos.
+Não adicionar respostas reais de API ao repositório.
+Fixtures sintéticas ficam em tests/. Consulte docs/SEGURANCA.md para o histórico.
