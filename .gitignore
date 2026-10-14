@@ -77,3 +77,6 @@ imc/teste-home*
 !imc/teste-home
 artifacts/
 /docs/auditoria-*.json
+
+# PDFs gerados localmente
+output/
